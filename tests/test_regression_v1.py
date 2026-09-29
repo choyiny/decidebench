@@ -1,4 +1,4 @@
-"""Pins every summary number of the committed v1.0 results, so a scoring change can't move them silently.
+"""Pins every summary number of the committed v1 results, so a scoring change can't move them silently.
 
 Headline runs are few-shot (one example per option), except Laya, CLM and Julia-1, which run zero-shot. Self-hosted
 costs come from the recorded wall-clock time (clean, unshared GPU). ZERO_SHOT pins the

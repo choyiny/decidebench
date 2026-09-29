@@ -24,7 +24,7 @@ def test_committed_review_covers_every_example_and_matches_review_md():
     for model, got in answers.items():
         assert set(got) == set(gold), model
     start, end = markers("review")
-    doc = (ROOT / "data" / "v1.0" / "examples" / "REVIEW.md").read_text()
+    doc = (ROOT / "data" / "v1" / "examples" / "REVIEW.md").read_text()
     block = doc.split(start, 1)[1].split(end, 1)[0].strip()
     assert block == "\n".join(summary(gold, answers))
     assert all(p.suffix == ".jsonl" for p in REVIEW_DIR.iterdir())

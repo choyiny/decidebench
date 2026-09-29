@@ -6,9 +6,10 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = "v1.0"
-DATA_DIR = ROOT / "data" / VERSION
-RESULTS_DIR = ROOT / "results" / VERSION
+RELEASE = "v1.0"
+DATA_VERSION = "v1"
+DATA_DIR = ROOT / "data" / DATA_VERSION
+RESULTS_DIR = ROOT / "results" / DATA_VERSION
 
 
 def results_path(spec: str, results_dir: Path = RESULTS_DIR) -> Path:

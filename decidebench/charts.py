@@ -34,7 +34,8 @@ SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "J
          "gpt-oss-120b-self": "gpt-oss-120b (self-hosted)", "llama-70b-self": "Llama-3.3-70B (self-hosted)",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
          "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b",
-         "julia-1": "Julia-1"}
+         "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
+         "gliner-decide": "GLiNER2.5-Decide"}
 
 
 def text(x, y, s, size=12, fill=INK, family=SANS, weight=400, anchor="start", extra=""):

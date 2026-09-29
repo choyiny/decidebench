@@ -1,4 +1,4 @@
-"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev and Julia-1."""
+"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff and GLiNER2."""
 
 from __future__ import annotations
 
@@ -81,3 +81,36 @@ class Julia1System(OpenJevSystem):
     endpoint = "tools/julia/serve.py (SupersonicLabs/Julia-1) on a DGX Spark (CUDA)"
     env_url, default_url = "JULIA_BASE_URL", "http://127.0.0.1:8740/v1"
     takes_examples = False
+
+
+class Jeff800mSystem(OpenJevSystem):
+    name = "jeff-800m"
+    served_name = "jeff"
+    label = "Jeff Qwen3.5-0.8B (self-hosted)"
+    endpoint = "jeff-serve (mstrasser/Jeff-Qwen3.5-0.8B) on a DGX Spark (CUDA)"
+    env_url, default_url = "JEFF800M_BASE_URL", "http://127.0.0.1:8750/v1"
+
+
+class Jeff2bSystem(OpenJevSystem):
+    name = "jeff-2b"
+    served_name = "jeff"
+    label = "Jeff Qwen3.5-2B (self-hosted)"
+    endpoint = "jeff-serve (mstrasser/Jeff-Qwen3.5-2B) on a DGX Spark (CUDA)"
+    env_url, default_url = "JEFF2B_BASE_URL", "http://127.0.0.1:8751/v1"
+
+
+class JeffGemma4System(OpenJevSystem):
+    name = "jeff-gemma4"
+    served_name = "jeff"
+    label = "Jeff Gemma4-E2B (self-hosted)"
+    endpoint = "jeff-serve (mstrasser/Jeff-Gemma4-E2B) on a DGX Spark (CUDA)"
+    env_url, default_url = "JEFFGEMMA4_BASE_URL", "http://127.0.0.1:8752/v1"
+
+
+class GlinerDecideSystem(OpenJevSystem):
+    name = "gliner-decide"
+    served_name = "gliner-decide"
+    label = "GLiNER2.5-Decide 340M (self-hosted)"
+    endpoint = "tools/gliner/serve.py (fastino/GLiNER2.5-Decide) on a DGX Spark (CUDA)"
+    env_url, default_url = "GLINER_BASE_URL", "http://127.0.0.1:8760/v1"
+    examples_in = "criteria"
