@@ -2,6 +2,7 @@
 # Pinned model code and weights under /work (~/decidebench-tmp on the box).
 set -euo pipefail
 cd /work
+command -v git >/dev/null || { apt-get update -qq && apt-get install -y -qq git >/dev/null; }
 [ -d CLM ] || git clone -q https://github.com/Contrastive-LM/CLM.git; git -C CLM checkout -q bb42c6c
 [ -d laya-upstream ] || git clone -q https://github.com/NandhaKishorM/laya.git laya-upstream; git -C laya-upstream checkout -q 573e5b62696ba441230cd6be71d593331b5d23af
 [ -d kev ] || git clone -q https://github.com/jaredpalmer/kev.git; git -C kev checkout -q 3e1cd3b

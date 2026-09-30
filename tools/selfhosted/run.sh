@@ -20,7 +20,7 @@ docker_run() {
 
 if [ "$group" = setup ]; then
   docker_run db-setup /work/repo/tools/selfhosted/groups/setup.sh
-  remote "docker wait db-setup >/dev/null; docker logs --tail 20 db-setup; docker rm db-setup >/dev/null"
+  remote "rc=\$(docker wait db-setup); docker logs --tail 20 db-setup; docker rm db-setup >/dev/null; exit \$rc"
   exit 0
 fi
 
