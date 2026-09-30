@@ -65,7 +65,7 @@ class TevSystem:
     label = "TEV (self-hosted)"
     kind = "system"
     pricing = L4
-    endpoint = "vLLM 0.23 (OpenAI chat), togethercomputer/Tev1-4B-experimental@0b7becf, on a DGX Spark (CUDA)"
+    endpoint = "vLLM 0.23 (OpenAI chat), togethercomputer/Tev1-4B-experimental@0b7becf, on an NVIDIA L4 (CUDA)"
     gateway_hop = False
     latency_comparable = False
     takes_examples = True
