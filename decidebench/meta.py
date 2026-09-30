@@ -17,7 +17,7 @@ REQUESTED = {"tev": "togethercomputer/Tev1-4B-experimental", "tev-together": "to
              "laya-typed": "laya-typed", "decider-2b": "decider-2b", "kev-4b": "kev-4b",
              "decider-4b": "decider-4b", "kev-9b": "kev-9b", "jevk5": "jevk5", "imajev-4b": "imajev-4b",
              "julia-1": "julia-1", "jeff-800m": "jeff", "jeff-2b": "jeff", "jeff-gemma4": "jeff",
-             "gliner-decide": "gliner-decide"}
+             "gliner-decide": "gliner-decide", "nimble-9b": "nimble-9b"}
 
 
 def git_commit() -> str:

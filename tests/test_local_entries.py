@@ -128,7 +128,8 @@ def test_laya_checkpoints_are_local_unpriced_systems_on_the_jev_protocol(entry, 
                                              ("jevk5", "http://127.0.0.1:8730/v1/systemone", "jevk5"),
                                              ("jeff-800m", "http://127.0.0.1:8750/v1/systemone", "jeff"),
                                              ("jeff-2b", "http://127.0.0.1:8751/v1/systemone", "jeff"),
-                                             ("jeff-gemma4", "http://127.0.0.1:8752/v1/systemone", "jeff")])
+                                             ("jeff-gemma4", "http://127.0.0.1:8752/v1/systemone", "jeff"),
+                                             ("nimble-9b", "http://127.0.0.1:8770/v1/systemone", "nimble-9b")])
 def test_open_jev_reproductions_are_local_systems_taking_examples_in_instructions(entry, url, model, monkeypatch):
     from dataclasses import replace as _r
 
@@ -192,14 +193,14 @@ def test_zero_shot_exception_is_labelled_in_tables_and_meta():
 
 SELF_HOSTED = ["tev", "qwen3-8b", "clm", "laya-typed", "decider-2b", "kev-4b", "gpt-oss-120b-self", "llama-70b-self",
                "decider-4b", "kev-9b", "jevk5", "imajev-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
-               "gliner-decide"]
+               "gliner-decide", "nimble-9b"]
 
 
 @pytest.mark.parametrize("entry", SELF_HOSTED)
 def test_self_hosted_entries_are_priced_by_l4_gpu_time(entry):
     cls = info(entry)
     assert (cls.pricing.basis, cls.pricing.gpu, cls.pricing.hourly_usd) == ("gpu_hours", "NVIDIA L4", 0.81)
-    assert cls.label.endswith("(self-hosted)") and "DGX Spark" in cls.endpoint and not cls.latency_comparable
+    assert cls.label.endswith("(self-hosted)") and "CUDA" in cls.endpoint and not cls.latency_comparable
 
 
 def test_qwen3_self_hosted_calls_vllm_chat_on_8091():

@@ -1,4 +1,4 @@
-"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff and GLiNER2."""
+"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff, GLiNER2 and Nimble."""
 
 from __future__ import annotations
 
@@ -114,3 +114,11 @@ class GlinerDecideSystem(OpenJevSystem):
     endpoint = "tools/gliner/serve.py (fastino/GLiNER2.5-Decide) on a DGX Spark (CUDA)"
     env_url, default_url = "GLINER_BASE_URL", "http://127.0.0.1:8760/v1"
     examples_in = "criteria"
+
+
+class Nimble9bSystem(OpenJevSystem):
+    name = "nimble-9b"
+    served_name = "nimble-9b"
+    label = "Bespoke-Nimble-9B (self-hosted)"
+    endpoint = "tools/nimble/serve.py (bespokelabs/Bespoke-Nimble-9B) on a CUDA GPU"
+    env_url, default_url = "NIMBLE_BASE_URL", "http://127.0.0.1:8770/v1"

@@ -43,6 +43,7 @@ case $group in
   jeff2b)  entries="jeff-2b"; conc=1;             health="http://127.0.0.1:8751/health"; ready='"ready"' ;;
   jeffgemma4) entries="jeff-gemma4"; conc=1;      health="http://127.0.0.1:8752/health"; ready='"ready"' ;;
   gliner)  entries="gliner-decide";               health="http://127.0.0.1:8760/v1/models" ;;
+  nimble)  entries="nimble-9b"; conc=1;           health="http://127.0.0.1:8770/v1/models" ;;
   *) echo "unknown group $group" >&2; exit 1 ;;
 esac
 
