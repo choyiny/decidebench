@@ -30,6 +30,7 @@ gpt-oss-120b, Llama-3.3-70B). The machine was a DGX Spark (NVIDIA GB10, 128 GB u
 ```bash
 echo 'GPU_SSH=<user>@<host>' >> .env    # .env is git-ignored
 echo 'GPU_IMAGE=vllm/vllm-openai:v0.23.0' >> .env    # on an x86 box; the default is the DGX Spark's image
+echo 'GPU_MEM_UTIL=0.85' >> .env                     # on a 24 GB GPU; the defaults are sized for the Spark's 128 GB
 tools/selfhosted/run.sh setup           # once: pinned model code under ~/decidebench-tmp on the box
 tools/selfhosted/run.sh tev             # then each group in turn
 ```

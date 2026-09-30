@@ -6,6 +6,7 @@ cd "$(dirname "$0")/../.."
 GPU_SSH=$(grep '^GPU_SSH=' .env | cut -d= -f2-)
 [ -n "$GPU_SSH" ] || { echo "set GPU_SSH=<user>@<host> in .env" >&2; exit 1; }
 IMAGE=$(grep '^GPU_IMAGE=' .env | cut -d= -f2- || true); IMAGE=${IMAGE:-vllm-node-tf5:latest}
+MEM=$(grep '^GPU_MEM_UTIL=' .env | cut -d= -f2- || true)
 group=${1:?usage: run.sh setup|<group>}
 remote() { ssh -o BatchMode=yes "$GPU_SSH" "$@"; }
 
@@ -15,7 +16,7 @@ rsync -a --delete --exclude .env --exclude .venv --exclude .superpowers --exclud
 docker_run() {
   remote "docker rm -f $1 >/dev/null 2>&1 || true; docker run -d --name $1 --gpus all --network host --ipc host \
     -v \$HOME/decidebench-tmp:/work -v \$HOME/decidebench-tmp/hf-cache:/root/.cache/huggingface \
-    -e HF_HUB_DISABLE_PROGRESS_BARS=1 --entrypoint bash $IMAGE $2 >/dev/null"
+    -e HF_HUB_DISABLE_PROGRESS_BARS=1 ${MEM:+-e GPU_MEM_UTIL=$MEM} --entrypoint bash $IMAGE $2 >/dev/null"
 }
 
 if [ "$group" = setup ]; then
