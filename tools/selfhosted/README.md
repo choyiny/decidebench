@@ -29,17 +29,20 @@ gpt-oss-120b, Llama-3.3-70B). The machine was a DGX Spark (NVIDIA GB10, 128 GB u
 
 ```bash
 echo 'GPU_SSH=<user>@<host>' >> .env    # .env is git-ignored
+echo 'GPU_IMAGE=vllm/vllm-openai:v0.23.0' >> .env    # on an x86 box; the default is the DGX Spark's image
 tools/selfhosted/run.sh setup           # once: pinned model code under ~/decidebench-tmp on the box
 tools/selfhosted/run.sh tev             # then each group in turn
 ```
 
+The box needs Docker with the NVIDIA container toolkit, `rsync` and `uv`.
+
 For each group, `run.sh` does the following:
 
 1. It copies the repository to `~/decidebench-tmp/repo` on the box, without `.env`.
-2. It starts the group's server in the box's `vllm-node-tf5` image (`groups/<group>.sh`: vLLM 0.23, torch 2.11 +
-   CUDA 13). Model weights download on the box, into `~/decidebench-tmp/hf-cache`.
+2. It starts the group's server in `GPU_IMAGE` (`groups/<group>.sh`): `vllm-node-tf5` on the DGX Spark (vLLM 0.23,
+   torch 2.11 + CUDA 13), `vllm/vllm-openai:v0.23.0` on x86. Model weights download on the box, into `~/decidebench-tmp/hf-cache`.
 3. It waits for the server's health check.
-4. It runs `decidebench.run` **on the box** at 4 requests in flight.
+4. It runs `decidebench.run` **on the box** at 4 requests in flight (1 for Jeff and Nimble).
 5. It copies `results/v1/<entry>.jsonl` and `meta/<entry>.json` back.
 6. It removes the container.
 

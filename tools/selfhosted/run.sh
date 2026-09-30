@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 GPU_SSH=$(grep '^GPU_SSH=' .env | cut -d= -f2-)
 [ -n "$GPU_SSH" ] || { echo "set GPU_SSH=<user>@<host> in .env" >&2; exit 1; }
-IMAGE=vllm-node-tf5:latest
+IMAGE=$(grep '^GPU_IMAGE=' .env | cut -d= -f2- || true); IMAGE=${IMAGE:-vllm-node-tf5:latest}
 group=${1:?usage: run.sh setup|<group>}
 remote() { ssh -o BatchMode=yes "$GPU_SSH" "$@"; }
 
