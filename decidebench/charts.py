@@ -226,7 +226,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     base = [p for p in summ if info(p).kind == "baseline"]
     others = [p for p in summ if p not in base]
     skipped = [p for p in others if not placeable(p)]
-    below = [p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo]
+    below = sorted((p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo), key=lambda p: -summ[p]["acc"])
     api = [p for p in others if p not in skipped and p not in below]
     name = {p: SHORT.get(p) or short(p) for p in api}
     desc = (f"Scatter plot of accuracy against {x_label.lower()}: "

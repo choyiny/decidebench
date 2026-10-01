@@ -65,6 +65,18 @@ def test_entries_below_the_accuracy_axis_are_listed_not_drawn():
     assert "Below the 85% axis: Qwen2-1.5B (Arize) 52.0%." in html
 
 
+def test_entries_below_the_axis_are_listed_by_accuracy():
+    from decidebench.charts import frontier_scatter
+
+    summ = {"tev": {"cost_task": 1e-5, "p50": 175.0, "acc": 0.90},
+            "julia-1": {"cost_task": 3e-6, "p50": 58.0, "acc": 0.35},
+            "jeff-800m": {"cost_task": 1e-5, "p50": 43.0, "acc": 0.71},
+            "jeff-gemma4": {"cost_task": 1.6e-5, "p50": 76.0, "acc": 0.81}}
+    html, _ = frontier_scatter("c", "t", summ, {"tev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 1, 5000,
+                               (10, 100, 1000), str, str)
+    assert "Below the 85% axis: Jeff-Gemma4 81.0%, Jeff-0.8B 71.0%, Julia-1 35.0%." in html
+
+
 def test_labels_avoid_obstacles_such_as_the_frontier_line():
     from decidebench.charts import label_boxes, place_labels
 

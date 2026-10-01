@@ -200,7 +200,8 @@ SELF_HOSTED = ["tev", "qwen3-8b", "clm", "laya-typed", "decider-2b", "kev-4b", "
 def test_self_hosted_entries_are_priced_by_l4_gpu_time(entry):
     cls = info(entry)
     assert (cls.pricing.basis, cls.pricing.gpu, cls.pricing.hourly_usd) == ("gpu_hours", "NVIDIA L4", 0.81)
-    assert cls.label.endswith("(self-hosted)") and "CUDA" in cls.endpoint and not cls.latency_comparable
+    assert cls.label.endswith("(self-hosted)") and not cls.latency_comparable
+    assert ("NVIDIA L4 (CUDA)" if cls.kind == "system" else "DGX Spark (CUDA)") in cls.endpoint
 
 
 def test_qwen3_self_hosted_calls_vllm_chat_on_8091():

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jeff Gemma4-E2B (v1.0): jeff-serve on :8752.
+# Jeff Gemma4-E2B (afcb75a, tag v1.0): jeff-serve on :8752.
 set -euo pipefail
 pip install -q --no-deps -e /work/jeff
 pip install -q "transformers==5.17.0" fastapi uvicorn pillow safetensors flash-linear-attention
