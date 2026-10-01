@@ -11,7 +11,7 @@ import shutil
 from pathlib import Path
 
 from decidebench.dataset import load_items
-from decidebench.paths import RESULTS_DIR, ROOT, VERSION, results_path
+from decidebench.paths import RELEASE, RESULTS_DIR, ROOT, results_path
 from decidebench.registry import ENTRIES, info
 from decidebench.report import fmt_pct, fronts, label
 from decidebench.score import load_rows, prepare
@@ -76,12 +76,12 @@ def leaderboard(results_dir: Path = RESULTS_DIR) -> dict:
                       "zero_shot": None if zero is None else fmt_pct(zero),
                       "families": {c: fmt_pct(x) for c, x in fam.items()}},
         })
-    return {"version": VERSION, "items": len(common), "families": families, "entries": out}
+    return {"version": RELEASE, "items": len(common), "families": families, "entries": out}
 
 
 def export(out_dir: Path = ROOT / "build" / "space", results_dir: Path = RESULTS_DIR) -> Path:
     (out_dir / "img").mkdir(parents=True, exist_ok=True)
-    (out_dir / "README.md").write_text(CARD.format(version=VERSION))
+    (out_dir / "README.md").write_text(CARD.format(version=RELEASE))
     (out_dir / "leaderboard.json").write_text(json.dumps(leaderboard(results_dir), indent=1))
     shutil.copy(ROOT / "tools" / "space" / "index.html", out_dir / "index.html")
     for png in (ROOT / "docs" / "img").glob("*.png"):

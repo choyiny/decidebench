@@ -13,7 +13,7 @@ class LayaSystem(JevSystem):
     label = "Laya 421M (self-hosted)"
     kind = "system"
     pricing = L4
-    endpoint = "tools/laya/serve.py: upstream laya @ NandhaKishorM/laya 573e5b6 (PyTorch) on a DGX Spark (CUDA)"
+    endpoint = "tools/laya/serve.py: upstream laya @ NandhaKishorM/laya 573e5b6 (PyTorch) on an NVIDIA L4 (CUDA)"
     gateway_hop = False
     latency_comparable = False
     takes_examples = False

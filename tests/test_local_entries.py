@@ -125,7 +125,11 @@ def test_laya_checkpoints_are_local_unpriced_systems_on_the_jev_protocol(entry, 
                                              ("kev-4b", "http://127.0.0.1:8009/v1/systemone", "kev-4b"),
                                              ("decider-4b", "http://127.0.0.1:8721/v1/systemone", "decider-4b"),
                                              ("kev-9b", "http://127.0.0.1:8010/v1/systemone", "kev-9b"),
-                                             ("jevk5", "http://127.0.0.1:8730/v1/systemone", "jevk5")])
+                                             ("jevk5", "http://127.0.0.1:8730/v1/systemone", "jevk5"),
+                                             ("jeff-800m", "http://127.0.0.1:8750/v1/systemone", "jeff"),
+                                             ("jeff-2b", "http://127.0.0.1:8751/v1/systemone", "jeff"),
+                                             ("jeff-gemma4", "http://127.0.0.1:8752/v1/systemone", "jeff"),
+                                             ("nimble-9b", "http://127.0.0.1:8770/v1/systemone", "nimble-9b")])
 def test_open_jev_reproductions_are_local_systems_taking_examples_in_instructions(entry, url, model, monkeypatch):
     from dataclasses import replace as _r
 
@@ -188,14 +192,16 @@ def test_zero_shot_exception_is_labelled_in_tables_and_meta():
 
 
 SELF_HOSTED = ["tev", "qwen3-8b", "clm", "laya-typed", "decider-2b", "kev-4b", "gpt-oss-120b-self", "llama-70b-self",
-               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "julia-1"]
+               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
+               "gliner-decide", "nimble-9b"]
 
 
 @pytest.mark.parametrize("entry", SELF_HOSTED)
 def test_self_hosted_entries_are_priced_by_l4_gpu_time(entry):
     cls = info(entry)
     assert (cls.pricing.basis, cls.pricing.gpu, cls.pricing.hourly_usd) == ("gpu_hours", "NVIDIA L4", 0.81)
-    assert cls.label.endswith("(self-hosted)") and "DGX Spark" in cls.endpoint and not cls.latency_comparable
+    assert cls.label.endswith("(self-hosted)") and not cls.latency_comparable
+    assert ("NVIDIA L4 (CUDA)" if cls.kind == "system" else "DGX Spark (CUDA)") in cls.endpoint
 
 
 def test_qwen3_self_hosted_calls_vllm_chat_on_8091():
@@ -253,3 +259,27 @@ def test_julia_is_the_zero_shot_exception_like_laya(monkeypatch):
 
     assert info("julia-1").takes_examples is False
     assert build_meta("julia-1", "m", concurrency=1, warmup=0)["protocol"].startswith("zero-shot")
+
+
+def test_gliner_decide_takes_examples_in_the_criteria(monkeypatch):
+    from dataclasses import replace as _r
+
+    shot = _r(ITEM, id="support_intent-t01-none", pair_id="support_intent-t01", difficulty="example", gold="none",
+              state="Do you ship to the outer islands on weekends at all?")
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: [shot])
+    seen = {}
+
+    def handler(request):
+        seen["url"], seen["body"] = str(request.url), json.loads(request.content)
+        return httpx.Response(200, json={"answers": {"decision": {"type": "choice", "choice": "none",
+                                                                 "probabilities": {"none": 0.8, "duplicate_charge": 0.2}}}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system("gliner-decide").predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    q = seen["body"]["questions"]["decision"]
+    assert seen["url"] == "http://127.0.0.1:8760/v1/systemone" and seen["body"]["state"] == ITEM.state
+    assert q["instructions"] == ITEM.question and q["criteria"]["none"]["examples"] == [shot.state]
+    assert (pred.key, pred.extra["examples_total"]) == ("none", 1)

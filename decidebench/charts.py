@@ -34,7 +34,8 @@ SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "J
          "gpt-oss-120b-self": "gpt-oss-120b (self-hosted)", "llama-70b-self": "Llama-3.3-70B (self-hosted)",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
          "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b",
-         "julia-1": "Julia-1"}
+         "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
+         "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B"}
 
 
 def text(x, y, s, size=12, fill=INK, family=SANS, weight=400, anchor="start", extra=""):
@@ -225,7 +226,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     base = [p for p in summ if info(p).kind == "baseline"]
     others = [p for p in summ if p not in base]
     skipped = [p for p in others if not placeable(p)]
-    below = [p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo]
+    below = sorted((p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo), key=lambda p: -summ[p]["acc"])
     api = [p for p in others if p not in skipped and p not in below]
     name = {p: SHORT.get(p) or short(p) for p in api}
     desc = (f"Scatter plot of accuracy against {x_label.lower()}: "
