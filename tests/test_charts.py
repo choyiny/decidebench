@@ -6,12 +6,12 @@ from decidebench.charts import frontier_scatter
 SUMM = {"tev": {"cost_task": 1e-5, "p50": 173.0, "acc": 0.90},
         "jev": {"cost_task": 2e-5, "p50": 459.0, "acc": 0.972},
         "arize-qwen2": {"cost_task": 8.1e-4, "p50": 2883.0, "acc": 0.99},
-        "llama-70b-self": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.992},
+        "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.992},
         "random": {"cost_task": 0.0, "p50": 0.0, "acc": 0.45}}
 
 
 def test_latency_scatter_draws_frontier_through_undominated_points_only():
-    html, h = frontier_scatter("latency-vs-accuracy", "Latency vs accuracy", SUMM, {"tev", "jev", "llama-70b-self", "random"},
+    html, h = frontier_scatter("latency-vs-accuracy", "Latency vs accuracy", SUMM, {"tev", "jev", "nimble-9b", "random"},
                                lambda v: v["p50"], "Median latency per call (log scale)", 100, 10000,
                                (100, 1000, 10000), lambda ms: f"{ms:,} ms", lambda ms: f"{ms:,.0f} ms")
     assert html.count("<polyline") == 1
@@ -43,14 +43,14 @@ def test_crowded_scatter_labels_every_point():
     summ = {"tev": {"cost_task": 1e-5, "p50": 175.0, "acc": 0.90}, "jev": {"cost_task": 2e-5, "p50": 459.0, "acc": 0.9725},
             "deepseek": {"cost_task": 6.9e-5, "p50": 2501.0, "acc": 0.985},
             "glm-flash": {"cost_task": 7.2e-5, "p50": 615.0, "acc": 0.985},
-            "gpt-oss-120b-self": {"cost_task": 1.04e-4, "p50": 1045.0, "acc": 0.98},
+            "imajev-4b": {"cost_task": 1.04e-4, "p50": 1045.0, "acc": 0.98},
             "deepseek-41": {"cost_task": 1.72e-4, "p50": 404.0, "acc": 0.985},
             "tev-together": {"cost_task": 7.82e-4, "p50": 841.0, "acc": 0.9925},
-            "arize-qwen2": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "llama-70b-self": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
+            "arize-qwen2": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
     html, _ = frontier_scatter("c", "t", summ, {"tev", "jev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
-    for name in ("TEV (self-hosted)", "JEV", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "gpt-oss-120b (self-hosted)", "DeepSeek-V4.1-Flash",
-                 "TEV (Together)", "Qwen2-1.5B (Arize)", "Llama-3.3-70B (self-hosted)"):
+    for name in ("TEV (self-hosted)", "JEV", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "imajev-4b", "DeepSeek-V4.1-Flash",
+                 "TEV (Together)", "Qwen2-1.5B (Arize)", "Nimble-9B"):
         assert f">{name}</text>" in html, name
 
 
@@ -147,8 +147,8 @@ def _segment_hits_box(a, b, box, steps=40):
 
 
 CROWD = {"jev": (304, 172), "tev": (412, 276), "arize-qwen2": (724, 144), "deepseek": (492, 140),
-         "glm-flash": (488, 152), "gpt-oss-120b-self": (512, 188), "deepseek-41": (576, 152), "tev-together": (720, 156),
-         "llama-70b-self": (680, 212), "qwen3-8b": (432, 320)}
+         "glm-flash": (488, 152), "laya-typed": (512, 188), "deepseek-41": (576, 152), "tev-together": (720, 156),
+         "decider-4b": (680, 212), "qwen3-8b": (432, 320)}
 
 
 def _merged(crowd, sub="98.0% · $32"):
@@ -198,8 +198,8 @@ def _gap(box, x, y):
 
 
 LATENCY_CROWD = {"jev": (408, 172), "arize-qwen2": (640, 144), "deepseek": (564, 140),
-                 "glm-flash": (404, 152), "gpt-oss-120b-self": (392, 188), "deepseek-41": (308, 152),
-                 "tev-together": (408, 156), "llama-70b-self": (408, 212),}
+                 "glm-flash": (404, 152), "laya-typed": (392, 188), "deepseek-41": (308, 152),
+                 "tev-together": (408, 156), "decider-4b": (408, 212),}
 
 
 def test_labels_without_a_leader_sit_nearer_their_own_point_than_any_other():

@@ -33,8 +33,6 @@ case $group in
   laya)    entries="laya-typed";                  health="http://127.0.0.1:8710/v1/models" ;;
   decider) entries="decider-2b";                  health="http://127.0.0.1:8720/health" ;;
   kev)     entries="kev-4b";                      health="http://127.0.0.1:8009/openapi.json" ;;
-  gptoss)  entries="gpt-oss-120b-self";           health="http://127.0.0.1:8093/v1/models" ;;
-  llama)   entries="llama-70b-self";              health="http://127.0.0.1:8094/v1/models" ;;
   decider4b) entries="decider-4b";                health="http://127.0.0.1:8721/health" ;;
   kev9b)   entries="kev-9b";                      health="http://127.0.0.1:8010/v1/models" ;;
   jevk5)   entries="jevk5";                       health="http://127.0.0.1:8730/health" ;;

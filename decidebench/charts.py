@@ -31,7 +31,6 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
 SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "JEV",
          "deepseek": "DeepSeek-V4-Flash", "deepseek-41": "DeepSeek-V4.1-Flash", "glm-flash": "GLM-5.3-Flash",
          "arize-qwen2": "Qwen2-1.5B (Arize)", "qwen3-8b": "Qwen3-8B (self-hosted)",
-         "gpt-oss-120b-self": "gpt-oss-120b (self-hosted)", "llama-70b-self": "Llama-3.3-70B (self-hosted)",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
          "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
