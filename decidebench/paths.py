@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RELEASE = "v1.0"
+RELEASE = "v1.1"
 DATA_VERSION = "v1"
 DATA_DIR = ROOT / "data" / DATA_VERSION
 RESULTS_DIR = ROOT / "results" / DATA_VERSION
