@@ -40,16 +40,3 @@ class VllmChatSystem(FrontierSystem):
         self.url = os.environ.get(self.url_env, f"http://127.0.0.1:{self.port}/v1").rstrip("/") + "/chat/completions"
         self.headers = {}
 
-
-class GptOssLocalSystem(VllmChatSystem):
-    name = "gpt-oss-120b-self"
-    model = "openai/gpt-oss-120b"
-    label = "gpt-oss-120b (self-hosted)"
-    url_env, port = "GPT_OSS_URL", 8093
-
-
-class Llama70bLocalSystem(VllmChatSystem):
-    name = "llama-70b-self"
-    model = "RedHatAI/Llama-3.3-70B-Instruct-FP8-dynamic"
-    label = "Llama-3.3-70B FP8 (self-hosted)"
-    url_env, port = "LLAMA_URL", 8094
