@@ -235,3 +235,37 @@ def test_tev_on_together_is_a_hosted_entry_with_the_same_prompt(monkeypatch):
     assert (p.basis, p.input_per_mtok, p.output_per_mtok) == ("list_price", 0.042, 0.0)
     assert info("tev-together").latency_comparable is True and info("tev-together").kind == "system"
     assert tev.build_body(ITEM, hosted.model, 0)["messages"] == tev.build_body(ITEM, local.model, 0)["messages"]
+
+
+@pytest.mark.parametrize("entry,price", [("clef", 0.24), ("clef-flash", 0.09)])
+def test_clef_calls_ai_space_systemone_with_its_own_model_and_jev_examples(monkeypatch, entry, price):
+    import asyncio
+
+    import httpx
+
+    from decidebench.registry import get_system, info
+
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: SHOTS)
+    monkeypatch.setenv("AISPACE_API_KEY", "k")
+    monkeypatch.setenv("JEV_MODEL", "jev-latest")
+    seen = []
+
+    def handler(request):
+        seen.append((str(request.url), json.loads(request.content)))
+        return httpx.Response(200, json={"model": entry, "answers": {"decision": {"choice": ITEM.options[0].key}},
+                                         "usage": {"input_tokens": 1000, "output_tokens": 0}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system(entry).predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    url, body = seen[0]
+    assert url == "https://ai.xyspace.dev/v1/systemone" and body["model"] == entry
+    criteria = body["questions"][jev.QUESTION_ID]["criteria"]
+    assert any(isinstance(v, dict) and v["examples"] for v in criteria.values())
+    assert pred.key == ITEM.options[0].key and pred.extra["examples_total"] == len(SHOTS)
+    cls = info(entry)
+    assert cls.kind == "system" and cls.latency_comparable and cls.gateway_hop
+    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (price, 0.0)
+    assert cls.pricing.source.startswith("https://developers.cloudflare.com/")

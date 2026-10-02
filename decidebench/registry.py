@@ -8,7 +8,7 @@ from decidebench.prompts import VARIANTS
 from decidebench.references.together import ArizeQwen2System, DeepSeek41System, DeepSeekSystem, GlmFlashSystem
 from decidebench.references.local import Qwen3LocalSystem
 from decidebench.systems.clm import ClmSystem
-from decidebench.systems.jev import JevSystem
+from decidebench.systems.jev import ClefFlashSystem, ClefSystem, JevSystem
 from decidebench.systems.openjev import (
     Decider2bSystem,
     Decider4bSystem,
@@ -27,11 +27,13 @@ from decidebench.systems.laya import LayaTypedSystem
 from decidebench.systems.tev import TevSystem, TevTogetherSystem
 from decidebench.types import System
 
-ENTRIES = ("jev", "tev", "tev-together", "imajev-4b", "decider-4b", "jevk5", "kev-4b", "kev-9b", "decider-2b",
-           "laya-typed", "clm", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4", "gliner-decide", "nimble-9b",
+ENTRIES = ("jev", "clef", "clef-flash", "tev", "tev-together", "imajev-4b", "decider-4b", "jevk5", "kev-4b", "kev-9b",
+           "decider-2b", "laya-typed", "clm", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4", "gliner-decide", "nimble-9b",
            "deepseek", "deepseek-41", "glm-flash", "arize-qwen2", "qwen3-8b", "random")
 CLASSES = {
     "jev": JevSystem,
+    "clef": ClefSystem,
+    "clef-flash": ClefFlashSystem,
     "tev": TevSystem,
     "tev-together": TevTogetherSystem,
     "imajev-4b": Imajev4bSystem,

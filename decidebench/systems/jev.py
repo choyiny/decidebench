@@ -86,3 +86,24 @@ class JevSystem:
                    "examples_shown": (data.get("examples_shown") or {}).get(QUESTION_ID, len(shots)),
                    "examples_total": len(shots)},
         )
+
+
+class ClefSystem(JevSystem):
+    """Cloudflare's Clef, served through the same AI Space /v1/systemone passthrough as JEV."""
+
+    name = model = "clef"
+    label = "Clef 27B (AI Space)"
+    pricing = Pricing(0.24, 0.0, "https://developers.cloudflare.com/workers-ai/models/clef/", "2026-10-01")
+    endpoint = "AI Space /v1/systemone (Cloudflare Workers AI)"
+
+    def __init__(self) -> None:
+        self.variant = "default"
+        self.url = os.environ.get("JEV_BASE_URL", "https://ai.xyspace.dev/v1").rstrip("/") + "/systemone"
+        self.headers = {"Authorization": f"Bearer {os.environ['AISPACE_API_KEY']}"}
+
+
+class ClefFlashSystem(ClefSystem):
+    name = model = "clef-flash"
+    label = "Clef-Flash 9B (AI Space)"
+    pricing = Pricing(0.09, 0.0, "https://developers.cloudflare.com/ai/models/%40cf/cloudflare/clef-flash/", "2026-10-01")
+
