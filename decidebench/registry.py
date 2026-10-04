@@ -24,10 +24,10 @@ from decidebench.systems.openjev import (
     Kev9bSystem,
 )
 from decidebench.systems.laya import LayaTypedSystem
-from decidebench.systems.tev import TevSystem, TevTogetherSystem
+from decidebench.systems.tev import TevSystem, TevTogetherSystem, Yev04bSystem
 from decidebench.types import System
 
-ENTRIES = ("jev", "clef", "clef-flash", "tev", "tev-together", "imajev-4b", "decider-4b", "jevk5", "kev-4b", "kev-9b",
+ENTRIES = ("jev", "clef", "clef-flash", "tev", "tev-together", "imajev-4b", "yev0-4b", "decider-4b", "jevk5", "kev-4b", "kev-9b",
            "decider-2b", "laya-typed", "clm", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4", "gliner-decide", "nimble-9b",
            "deepseek", "deepseek-41", "glm-flash", "arize-qwen2", "qwen3-8b", "random")
 CLASSES = {
@@ -37,6 +37,7 @@ CLASSES = {
     "tev": TevSystem,
     "tev-together": TevTogetherSystem,
     "imajev-4b": Imajev4bSystem,
+    "yev0-4b": Yev04bSystem,
     "decider-4b": Decider4bSystem,
     "jevk5": JevK5System,
     "kev-4b": Kev4bSystem,

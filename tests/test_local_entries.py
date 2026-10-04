@@ -192,7 +192,7 @@ def test_zero_shot_exception_is_labelled_in_tables_and_meta():
 
 
 SELF_HOSTED = ["tev", "qwen3-8b", "clm", "laya-typed", "decider-2b", "kev-4b",
-               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
+               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "yev0-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
                "gliner-decide", "nimble-9b"]
 
 
@@ -215,6 +215,32 @@ def test_tev_is_self_hosted_on_vllm_without_an_api_key(monkeypatch):
     assert s.model == "togethercomputer/Tev1-4B-experimental" and s.headers == {}
     assert s.url == "http://127.0.0.1:8092/v1/chat/completions"
     assert get_system("tev.zero_shot").name == "tev.zero_shot"
+
+
+def test_yev_answers_in_tevs_chat_format_with_examples_as_turns(monkeypatch):
+    from decidebench import prompts
+
+    shots = [ITEM]
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: shots)
+    seen = {}
+
+    def handler(request):
+        seen["url"], seen["body"] = str(request.url), json.loads(request.content)
+        return httpx.Response(200, json={"model": "yev0-4b", "choices": [{"message": {"content": "B"}, "logprobs": {
+            "content": [{"token": "B", "logprob": math.log(0.7), "top_logprobs": [
+                {"token": "B", "logprob": math.log(0.7)}, {"token": "A", "logprob": math.log(0.2)},
+                {"token": "C", "logprob": math.log(0.1)}]}]}}],
+            "usage": {"prompt_tokens": 900, "completion_tokens": 1}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system("yev0-4b").predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    assert seen["url"] == "http://127.0.0.1:8780/v1/chat/completions"
+    assert seen["body"]["messages"] == prompts.build_messages(ITEM, shots)
+    assert (pred.key, pred.provider, pred.extra["examples_shown"]) == ("cancel_subscription", "yev0-4b", len(shots))
+    assert pred.probs["cancel_subscription"] == pytest.approx(0.7)
 
 
 @pytest.mark.parametrize("entry,url", [("imajev-4b", "http://127.0.0.1:8765/v1/systemone")])

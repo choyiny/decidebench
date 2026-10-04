@@ -123,3 +123,17 @@ class TevTogetherSystem(TevSystem):
         self.model = "together/Tev1-4B-experimental"
         self.url = "https://api.together.ai/v1/chat/completions"
         self.headers = {"Authorization": f"Bearer {os.environ['TOGETHER_API_KEY']}"}
+
+
+class Yev04bSystem(TevSystem):
+    """yev0-4b, a Qwen3.5-4B model trained on TEV's prompt format, behind `yev serve`'s chat endpoint, which returns
+    the calibrated letter probabilities from one forward pass."""
+
+    label = "yev0-4b (self-hosted)"
+    endpoint = "yev serve (choyiny/yev0-4b@4c0c7b9, chat endpoint) on an NVIDIA L4 (CUDA)"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "yev0-4b"
+        self.model = "yev0-4b"
+        self.url = os.environ.get("YEV_BASE_URL", "http://127.0.0.1:8780/v1").rstrip("/") + "/chat/completions"
