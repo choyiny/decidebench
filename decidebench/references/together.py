@@ -40,11 +40,3 @@ class DeepSeek41System(TogetherChatSystem):
     label = "DeepSeek-V4.1-Flash (Together)"
     pricing = Pricing(0.30, 1.20, TOGETHER_MODELS, "2026-09-28")
 
-
-class ArizeQwen2System(TogetherChatSystem):
-    """A 1.5B Qwen 2 instruct model published by Arize: a small general model priced near the decision models."""
-
-    name = "arize-qwen2"
-    model = "arize-ai/qwen-2-1.5b-instruct"
-    label = "Qwen2-1.5B, Arize (Together)"
-    pricing = Pricing(0.10, 0.10, TOGETHER_MODELS, "2026-09-28")

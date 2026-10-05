@@ -128,7 +128,6 @@ TOGETHER_LIST_PRICES = {
     "deepseek": ("deepseek-ai/DeepSeek-V4-Flash-0731", 0.14, 0.28),
     "glm-flash": ("zai-org/GLM-5.3-Flash", 0.15, 0.50),
     "deepseek-41": ("deepseek-ai/DeepSeek-V4.1-Flash", 0.30, 1.20),
-    "arize-qwen2": ("arize-ai/qwen-2-1.5b-instruct", 0.10, 0.10),
 }
 
 

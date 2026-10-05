@@ -31,7 +31,6 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
 SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "JEV",
          "clef": "Clef", "clef-flash": "Clef-Flash", "drex": "Drex 1.5",
          "deepseek": "DeepSeek-V4-Flash", "deepseek-41": "DeepSeek-V4.1-Flash", "glm-flash": "GLM-5.3-Flash",
-         "arize-qwen2": "Qwen2-1.5B (Arize)", "qwen3-8b": "Qwen3-8B (self-hosted)",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
          "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b", "yev0-4b": "yev0-4b",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
@@ -309,9 +308,9 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
 
 
 
-def errors_cost_latency(slug, summ, ref="jev"):
+def errors_cost_latency(slug, summ, ref="jev", ready=0.90):
     """Every entry, fewest errors first: wrong answers per 100 decisions, cost per 1M tasks and median latency on one
-    shared row order, each followed by its multiple of `ref`'s. Self-hosted bars are hatched:
+    shared row order, each followed by its multiple of `ref`'s, with a dashed line at the `ready` accuracy. Self-hosted bars are hatched:
     their cost is GPU time and their latency has no network in it, so it gets no multiple."""
     base = [p for p in summ if info(p).kind == "baseline"]
     rows = sorted((p for p in summ if p not in base and math.isfinite(summ[p]["cost_task"])),
@@ -325,7 +324,7 @@ def errors_cost_latency(slug, summ, ref="jev"):
     w = 1120
 
     top, row_h, bar_h = 148, 32, 12
-    h = top + row_h * len(rows) + 92
+    h = top + row_h * len(rows) + 112
     s = header(slug, "Errors, cost and latency", (
         "Bar charts of every entry, fewest errors first. "
         + "; ".join(f"{name[p]}: {err[p]:.2f} wrong per 100, ${cost[p]:,.0f} per 1M tasks, {lat[p]:,.0f} ms median"
@@ -369,13 +368,22 @@ def errors_cost_latency(slug, summ, ref="jev"):
         for t in range(0, hi + 1, step):
             s.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{y_axis}" stroke="{GRID}" stroke-width="0.8"/>')
             s.append(text(X(t), y_axis + 18, tick(t), 11, MUTED, MONO, 400, "middle"))
+        if vals is err:
+            xr = X(100 * (1 - ready))
+            s.append(f'<line x1="{xr:.1f}" y1="{top - 4}" x2="{xr:.1f}" y2="{y_axis + 26}" stroke="{INK}" '
+                     'stroke-width="1.2" stroke-dasharray="4 3"/>')
+            s.append(text(xr - 4, y_axis + 40, f"Production Ready Line ({100 * ready:.0f}% accuracy)", 12, INK, SANS, 600))
         for i, p in enumerate(rows):
             y = top + i * row_h + row_h / 2
             kind = "system" if info(p).kind == "system" else "reference"
             fill = f"url(#hatch-{kind})" if p in hatched else (ACCENT if kind == "system" else MUTED)
             bw = max(X(vals[p]) - x0, 2)
             s.append(f'<rect x="{x0}" y="{y - bar_h / 2:.1f}" width="{bw:.1f}" height="{bar_h}" rx="3" fill="{fill}"/>')
-            s.append(text(x0 + bw + 8, y + 4, fmt(vals[p]), 12, INK, MONO, 500))
+            label_ = fmt(vals[p])
+            if vals is err:
+                s.append(f'<rect x="{x0 + bw + 4:.1f}" y="{y - 9:.1f}" width="{len(label_) * 7.4 + 8:.1f}" height="18" '
+                         f'fill="{"#f4eae6" if p == ref else PAPER}"/>')
+            s.append(text(x0 + bw + 8, y + 4, label_, 12, INK, MONO, 500))
             comparable = vals is not lat or p not in selfhosted
             m = f"{vals[p] / vals[ref]:.1f}×" if comparable else "–"
             s.append(text(xm, y + 4, m, 12, MUTED if p == ref or not comparable else INK, MONO, 400, "end"))
@@ -389,7 +397,7 @@ def errors_cost_latency(slug, summ, ref="jev"):
              "$0.81/h, and its latency is measured on the GPU box with no network, so it is not compared with JEV.",
              "Source: github.com/choyiny/decidebench"]
     for j, line in enumerate(l for n in notes for l in textwrap.wrap(n, 168)):
-        s.append(text(24, y_axis + 48 + 18 * j, line, 12, SOFT, SANS))
+        s.append(text(24, y_axis + 68 + 18 * j, line, 12, SOFT, SANS))
     return page(slug, s), h, w
 
 

@@ -5,7 +5,7 @@ from decidebench.charts import frontier_scatter
 
 SUMM = {"tev": {"cost_task": 1e-5, "p50": 173.0, "acc": 0.90},
         "jev": {"cost_task": 2e-5, "p50": 459.0, "acc": 0.972},
-        "arize-qwen2": {"cost_task": 8.1e-4, "p50": 2883.0, "acc": 0.99},
+        "gliner-decide": {"cost_task": 8.1e-4, "p50": 2883.0, "acc": 0.99},
         "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.992},
         "random": {"cost_task": 0.0, "p50": 0.0, "acc": 0.45}}
 
@@ -46,11 +46,11 @@ def test_crowded_scatter_labels_every_point():
             "imajev-4b": {"cost_task": 1.04e-4, "p50": 1045.0, "acc": 0.98},
             "deepseek-41": {"cost_task": 1.72e-4, "p50": 404.0, "acc": 0.985},
             "tev-together": {"cost_task": 7.82e-4, "p50": 841.0, "acc": 0.9925},
-            "arize-qwen2": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
+            "gliner-decide": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
     html, _ = frontier_scatter("c", "t", summ, {"tev", "jev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
     for name in ("TEV (self-hosted)", "JEV", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "imajev-4b", "DeepSeek-V4.1-Flash",
-                 "TEV (Together)", "Qwen2-1.5B (Arize)", "Nimble-9B"):
+                 "TEV (Together)", "GLiNER2.5-Decide", "Nimble-9B"):
         assert f">{name}</text>" in html, name
 
 
@@ -58,11 +58,11 @@ def test_entries_below_the_accuracy_axis_are_listed_not_drawn():
     from decidebench.charts import frontier_scatter
 
     summ = {"tev": {"cost_task": 1e-5, "p50": 175.0, "acc": 0.90},
-            "arize-qwen2": {"cost_task": 2.4e-5, "p50": 198.0, "acc": 0.52}}
+            "gliner-decide": {"cost_task": 2.4e-5, "p50": 198.0, "acc": 0.52}}
     html, _ = frontier_scatter("c", "t", summ, {"tev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
     assert html.count("<circle") == 2
-    assert "Below the 85% axis: Qwen2-1.5B (Arize) 52.0%." in html
+    assert "Below the 85% axis: GLiNER2.5-Decide 52.0%." in html
 
 
 def test_entries_below_the_axis_are_listed_by_accuracy():
@@ -112,9 +112,9 @@ def test_footer_notes_wrap_to_one_line_each():
     from decidebench.charts import W, frontier_scatter
 
     summ = {"tev": {"cost_task": 1e-5, "p50": 175.0, "acc": 0.90},
-            "arize-qwen2": {"cost_task": 2.4e-5, "p50": 198.0, "acc": 0.52},
+            "gliner-decide": {"cost_task": 2.4e-5, "p50": 198.0, "acc": 0.52},
             "clm": {"cost_task": float("nan"), "p50": 192.0, "acc": 0.40},
-            "qwen3-8b": {"cost_task": float("nan"), "p50": 771.0, "acc": 0.85},
+            "kev-9b": {"cost_task": float("nan"), "p50": 771.0, "acc": 0.85},
             "random": {"cost_task": 0.0, "p50": 0.0, "acc": 0.22}}
     html, h = frontier_scatter("c", "t", summ, {"tev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
@@ -131,13 +131,13 @@ def test_long_footer_notes_wrap_within_the_canvas():
 
     nan = float("nan")
     summ = {"jev": {"cost_task": 2e-5, "p50": 459.0, "acc": 0.97}}
-    summ |= {p: {"cost_task": 1e-4, "p50": nan, "acc": 0.9} for p in ("tev", "clm", "laya-typed", "decider-2b", "kev-4b", "qwen3-8b")}
+    summ |= {p: {"cost_task": 1e-4, "p50": nan, "acc": 0.9} for p in ("tev", "clm", "laya-typed", "decider-2b", "kev-4b", "kev-9b")}
     html, _ = frontier_scatter("l", "t", summ, {"jev"}, lambda v: v["p50"], "Latency (log scale)", 100, 10000,
                                (100, 1000, 10000), str, str)
     lines = [m for m in re.findall(r'<text x="112"[^>]*>([^<]*)</text>', html) if not m.isdigit()]
     assert all(112 + len(line) * 12 * 0.55 <= W - 16 for line in lines), lines
     joined = " ".join(lines)
-    for name in ("TEV (self-hosted)", "CLM-v0.1-8B", "Laya typed-decisions", "Decider-2B", "Kev-4B", "Qwen3-8B"):
+    for name in ("TEV (self-hosted)", "CLM-v0.1-8B", "Laya typed-decisions", "Decider-2B", "Kev-4B", "Kev-9B"):
         assert name in joined, name
 
 
@@ -146,9 +146,9 @@ def _segment_hits_box(a, b, box, steps=40):
                for t in range(steps + 1))
 
 
-CROWD = {"jev": (304, 172), "tev": (412, 276), "arize-qwen2": (724, 144), "deepseek": (492, 140),
+CROWD = {"jev": (304, 172), "tev": (412, 276), "gliner-decide": (724, 144), "deepseek": (492, 140),
          "glm-flash": (488, 152), "laya-typed": (512, 188), "deepseek-41": (576, 152), "tev-together": (720, 156),
-         "decider-4b": (680, 212), "qwen3-8b": (432, 320)}
+         "decider-4b": (680, 212), "kev-9b": (432, 320)}
 
 
 def _merged(crowd, sub="98.0% · $32"):
@@ -197,7 +197,7 @@ def _gap(box, x, y):
     return math.hypot(max(box[0] - x, 0, x - box[2]), max(box[1] - y, 0, y - box[3]))
 
 
-LATENCY_CROWD = {"jev": (408, 172), "arize-qwen2": (640, 144), "deepseek": (564, 140),
+LATENCY_CROWD = {"jev": (408, 172), "gliner-decide": (640, 144), "deepseek": (564, 140),
                  "glm-flash": (404, 152), "laya-typed": (392, 188), "deepseek-41": (308, 152),
                  "tev-together": (408, 156), "decider-4b": (408, 212),}
 

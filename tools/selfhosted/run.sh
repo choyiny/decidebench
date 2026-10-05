@@ -28,7 +28,6 @@ fi
 conc=4; ready=''
 case $group in
   tev)     entries="tev tev.zero_shot";           health="http://127.0.0.1:8092/v1/models" ;;
-  qwen3)   entries="qwen3-8b";                    health="http://127.0.0.1:8091/v1/models" ;;
   clm)     entries="clm";                         health="http://127.0.0.1:8700/health" ;;
   laya)    entries="laya-typed";                  health="http://127.0.0.1:8710/v1/models" ;;
   decider) entries="decider-2b";                  health="http://127.0.0.1:8720/health" ;;
