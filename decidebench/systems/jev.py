@@ -107,3 +107,21 @@ class ClefFlashSystem(ClefSystem):
     label = "Clef-Flash 9B (AI Space)"
     pricing = Pricing(0.09, 0.0, "https://developers.cloudflare.com/ai/models/%40cf/cloudflare/clef-flash/", "2026-10-01")
 
+
+
+class DrexSystem(JevSystem):
+    """Nace.AI's Drex 1.5, called directly on its own /v1/systemone. Drex takes criteria descriptions as plain strings
+    only, so the worked examples go in the instructions."""
+
+    name = "drex"
+    model = "drex-v1.5"
+    label = "Drex 1.5 (Nace.AI)"
+    pricing = Pricing(0.05, 0.0, "https://drex.nace.ai/docs/reference/pricing", "2026-10-04")
+    endpoint = "Nace.AI Drex /v1/systemone"
+    gateway_hop = False
+    examples_in = "instructions"
+
+    def __init__(self) -> None:
+        self.variant = "default"
+        self.url = os.environ.get("DREX_BASE_URL", "https://drex.nace.ai/v1").rstrip("/") + "/systemone"
+        self.headers = {"Authorization": f"Bearer {os.environ['DREX_API_KEY']}"}
