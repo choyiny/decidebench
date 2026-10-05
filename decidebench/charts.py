@@ -43,11 +43,11 @@ def text(x, y, s, size=12, fill=INK, family=SANS, weight=400, anchor="start", ex
             f'font-weight="{weight}" text-anchor="{anchor}" {extra}>{escape(str(s))}</text>')
 
 
-def header(slug: str, title: str, desc: str, h: int, dy: int) -> list[str]:
+def header(slug: str, title: str, desc: str, h: int, dy: int, w: int = W) -> list[str]:
     """Open the SVG. No visible heading: the README supplies context, so the drawing starts at the top.
     Content is laid out in the original coordinates and shifted up by `dy`; the SVG is `h` tall."""
     return [
-        f'<svg viewBox="0 {dy} {W} {h}" width="{W}" height="{h}" xmlns="http://www.w3.org/2000/svg" role="img" '
+        f'<svg viewBox="0 {dy} {w} {h}" width="{w}" height="{h}" xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-labelledby="{slug}-title {slug}-desc">',
         f'<title id="{slug}-title">{escape(title)}</title>',
         f'<desc id="{slug}-desc">{escape(desc)}</desc>',
@@ -309,10 +309,94 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
 
 
 
-def render_png(html: Path, png: Path, height: int) -> None:
+def errors_cost_latency(slug, summ, ref="jev"):
+    """Every entry, fewest errors first: wrong answers per 100 decisions, cost per 1M tasks and median latency on one
+    shared row order, each followed by its multiple of `ref`'s. Self-hosted bars are hatched:
+    their cost is GPU time and their latency has no network in it, so it gets no multiple."""
+    base = [p for p in summ if info(p).kind == "baseline"]
+    rows = sorted((p for p in summ if p not in base and math.isfinite(summ[p]["cost_task"])),
+                  key=lambda p: (-summ[p]["acc"], summ[p]["cost_task"]))
+    err = {p: 100 * (1 - summ[p]["acc"]) for p in rows}
+    cost = {p: summ[p]["cost_task"] * 1e6 for p in rows}
+    lat = {p: summ[p]["p50"] for p in rows}
+    name = {p: SHORT.get(p) or short(p) for p in rows}
+    selfhosted = {p for p in rows if info(p).pricing.basis == "gpu_hours"}
+    vs = f"VS {(SHORT.get(ref) or short(ref)).upper()}"
+    w = 1120
+
+    top, row_h, bar_h = 148, 32, 12
+    h = top + row_h * len(rows) + 92
+    s = header(slug, "Errors, cost and latency", (
+        "Bar charts of every entry, fewest errors first. "
+        + "; ".join(f"{name[p]}: {err[p]:.2f} wrong per 100, ${cost[p]:,.0f} per 1M tasks, {lat[p]:,.0f} ms median"
+                    for p in rows) + "."), h, 0, w)
+    s.append(text(24, 40, "Wrong answers per 100 decisions, what they cost and how fast they come", 22, INK, SANS, 600))
+    s.append(text(24, 64, "DecideBench v1, every entry, with one worked example per option for the models that take "
+                  "them", 13, MUTED, SANS))
+    s.append(f'<rect x="24" y="84" width="12" height="12" rx="2" fill="{ACCENT}"/>')
+    s.append(text(42, 94, "Decision model", 12, INK, SANS))
+    s.append(f'<rect x="152" y="84" width="12" height="12" rx="2" fill="{MUTED}"/>')
+    s.append(text(170, 94, "General LLM", 12, INK, SANS))
+    s.append('<defs>' + "".join(
+        f'<pattern id="hatch-{k}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
+        f'<rect width="6" height="6" fill="{bg}"/><line x1="0" y1="0" x2="0" y2="6" stroke="{c}" stroke-width="2.5"/></pattern>'
+        for k, c, bg in (("system", ACCENT, "rgba(235,108,54,0.25)"), ("reference", MUTED, "rgba(79,93,117,0.25)")))
+        + '</defs>')
+
+    def nice(v, step):
+        return max(step, math.ceil(v / step) * step)
+
+    panels = [
+        ("WRONG PER 100", err, 200, 400, 520, nice(max(err.values()), 20), 20, lambda t: f"{t}",
+         lambda v: f"{v:.2f}".rstrip("0").rstrip("."), set()),
+        ("COST PER 1M TASKS", cost, 560, 680, 776, nice(max(cost.values()), 250), 250, lambda t: f"${t}",
+         lambda v: f"${v:,.0f}", selfhosted),
+        ("MEDIAN LATENCY", lat, 816, 936, w - 24, nice(max(lat.values()), 1000), 1000, lambda t: f"{t / 1000:g} s",
+         lambda v: f"{v:,.0f} ms", selfhosted),
+    ]
+    y_axis = top + row_h * len(rows)
+    for i, p in enumerate(rows):
+        if p == ref:
+            y = top + i * row_h
+            s.append(f'<rect x="16" y="{y + 1}" width="{w - 32}" height="{row_h - 2}" rx="4" fill="rgba(235,108,54,0.08)"/>')
+    for title, vals, x0, x1, xm, hi, step, tick, fmt, hatched in panels:
+        def X(v):
+            return x0 + v / hi * (x1 - x0)
+
+        s.append(text(x0, top - 28, title, 11, MUTED, MONO, 500, "start", 'letter-spacing="0.12em"'))
+        s.append(text(x0, top - 11, "lower is better", 12, SOFT, SANS))
+        s.append(text(xm, top - 28, vs, 11, MUTED, MONO, 500, "end", 'letter-spacing="0.12em"'))
+        for t in range(0, hi + 1, step):
+            s.append(f'<line x1="{X(t):.1f}" y1="{top}" x2="{X(t):.1f}" y2="{y_axis}" stroke="{GRID}" stroke-width="0.8"/>')
+            s.append(text(X(t), y_axis + 18, tick(t), 11, MUTED, MONO, 400, "middle"))
+        for i, p in enumerate(rows):
+            y = top + i * row_h + row_h / 2
+            kind = "system" if info(p).kind == "system" else "reference"
+            fill = f"url(#hatch-{kind})" if p in hatched else (ACCENT if kind == "system" else MUTED)
+            bw = max(X(vals[p]) - x0, 2)
+            s.append(f'<rect x="{x0}" y="{y - bar_h / 2:.1f}" width="{bw:.1f}" height="{bar_h}" rx="3" fill="{fill}"/>')
+            s.append(text(x0 + bw + 8, y + 4, fmt(vals[p]), 12, INK, MONO, 500))
+            comparable = vals is not lat or p not in selfhosted
+            m = f"{vals[p] / vals[ref]:.1f}×" if comparable else "–"
+            s.append(text(xm, y + 4, m, 12, MUTED if p == ref or not comparable else INK, MONO, 400, "end"))
+        s.append(f'<line x1="{x0}" y1="{top}" x2="{x0}" y2="{y_axis}" stroke="{AXIS}" stroke-width="1"/>')
+    for i, p in enumerate(rows):
+        y = top + i * row_h + row_h / 2
+        s.append(text(24, y + 4, name[p], 13, INK, SANS, 600 if p == ref else 500))
+    notes = ["400 test items, so each wrong answer adds 0.25 per 100. " + "".join(
+             f"{label(b)} gets {100 * (1 - summ[b]['acc']):.2f} wrong per 100 (not shown). " for b in base)
+             + "Hatched: self-hosted. Its cost is NVIDIA L4 time at "
+             "$0.81/h, and its latency is measured on the GPU box with no network, so it is not compared with JEV.",
+             "Source: github.com/choyiny/decidebench"]
+    for j, line in enumerate(l for n in notes for l in textwrap.wrap(n, 168)):
+        s.append(text(24, y_axis + 48 + 18 * j, line, 12, SOFT, SANS))
+    return page(slug, s), h, w
+
+
+def render_png(html: Path, png: Path, height: int, width: int = W) -> None:
     subprocess.run(
         [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=2",
-         f"--window-size={W},{height}", "--virtual-time-budget=8000", f"--screenshot={png}", html.as_uri()],
+         f"--window-size={width},{height}", "--virtual-time-budget=8000", f"--screenshot={png}", html.as_uri()],
         check=True, capture_output=True,
     )
 
@@ -333,11 +417,12 @@ def main() -> None:
             "latency-vs-accuracy", "Latency vs accuracy", latency_view(summ), fr["latency"], lambda v: v["p50"],
             "Median latency per call (log scale)", 100, 10000, (100, 1000, 10000),
             lambda ms: f"{ms:,} ms", lambda ms: f"{ms:,.0f} ms"),
+        "errors-cost-latency": errors_cost_latency("errors-cost-latency", summ),
     }
-    for name, (html, h) in charts.items():
+    for name, (html, h, *w) in charts.items():
         src = DIAGRAMS / f"{name}.html"
         src.write_text(html)
-        render_png(src, IMG / f"{name}.png", h)
+        render_png(src, IMG / f"{name}.png", h, *w)
         print(f"docs/img/{name}.png")
 
 
