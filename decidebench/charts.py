@@ -280,8 +280,9 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     line_boxes = [(ax + (bx - ax) * t / 20 - 2, ay + (by - ay) * t / 20 - 2, ax + (bx - ax) * t / 20 + 2,
                    ay + (by - ay) * t / 20 + 2)
                   for (ax, ay), (bx, by) in zip(frontier_line, frontier_line[1:]) for t in range(21)]
+    tick_boxes = [(x0 - 52, Y(acc) - 10, x0 - 8, Y(acc) + 8) for acc in (85, 90, 95, 100)]
     where = place_labels({p: at[p] for p in order}, texts, PLACE, bounds=(8, dy + 8, W - 8, y0 + 40),
-                         obstacles=line_boxes)
+                         obstacles=line_boxes + tick_boxes)
     dots_at = len(s)
     for p in sorted(api, key=lambda p: p in systems):
         x, y = xy[p]
