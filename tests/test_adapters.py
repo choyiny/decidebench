@@ -351,3 +351,27 @@ def test_openai_decisions_refusal_and_unknown_choice_are_unusable():
     assert parse_response(ITEM, {"answers": []}) == (None, None, "missing answer")
     key, _, error = parse_response(ITEM, {"answers": [{"type": "choice", "name": "decision", "choice": "nope"}]})
     assert key is None and "not an option" in error
+
+
+def test_openai_decisions_zero_shot_sends_only_the_question(monkeypatch):
+    import asyncio
+
+    import httpx
+
+    from decidebench.registry import get_system
+
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: SHOTS)
+    monkeypatch.setenv("OPENAI_API_KEY", "k")
+    bodies = []
+
+    def handler(request):
+        bodies.append(json.loads(request.content))
+        return httpx.Response(200, json={"answers": [{"type": "choice", "name": "decision", "choice": "none"}]})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system("openai-decisions.zero_shot").predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    assert bodies[0]["questions"][0]["instructions"] == ITEM.question
+    assert pred.provider == "openai-decisions.zero_shot" and pred.extra["examples_total"] == 0

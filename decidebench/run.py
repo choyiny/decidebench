@@ -107,7 +107,7 @@ async def run_system(spec: str, items: list[Item], concurrency: int, warmup: int
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--entry", nargs="+", default=["tev", "jev"],
-                    help=f"{', '.join(ENTRIES)}; zero-shot variants as tev.zero_shot, jev.zero_shot")
+                    help=f"{', '.join(ENTRIES)}; zero-shot variants as tev.zero_shot, jev.zero_shot, openai-decisions.zero_shot")
     ap.add_argument("--category", nargs="*", help="limit to these task families")
     ap.add_argument("--limit", type=int, help="only the first N items (whole pairs)")
     ap.add_argument("--concurrency", type=int, default=4)
