@@ -58,7 +58,7 @@ CLASSES = {
     "glm-flash": GlmFlashSystem,
     "random": RandomBaseline,
 }
-WITH_VARIANTS = ("tev", "jev")
+WITH_VARIANTS = ("tev", "jev", "openai-decisions")
 
 
 def info(spec: str) -> type:
@@ -70,7 +70,7 @@ def info(spec: str) -> type:
 
 
 def get_system(spec: str, items: list[Item] | None = None) -> System:
-    """An entry in ENTRIES; TEV and JEV also run zero-shot as `tev.zero_shot` and `jev.zero_shot`."""
+    """An entry in ENTRIES; those in WITH_VARIANTS also run zero-shot, as `<entry>.zero_shot`."""
     name, _, variant = spec.partition(".")
     variant = variant or "default"
     cls = info(spec)
