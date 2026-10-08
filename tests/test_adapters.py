@@ -300,3 +300,54 @@ def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypa
     cls = info("drex")
     assert cls.kind == "system" and cls.latency_comparable and not cls.gateway_hop
     assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (0.05, 0.0)
+
+
+def test_openai_decisions_asks_one_choice_question_with_examples_in_the_instructions(monkeypatch):
+    import asyncio
+
+    import httpx
+
+    from decidebench.registry import get_system, info
+    from decidebench.systems import openai_decisions
+
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: SHOTS)
+    monkeypatch.setenv("OPENAI_API_KEY", "k")
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    gold = ITEM.options[0].key
+    seen = []
+
+    def handler(request):
+        seen.append((str(request.url), request.headers["authorization"], json.loads(request.content)))
+        return httpx.Response(200, json={
+            "model": "gpt-6-luna",
+            "answers": [{"type": "choice", "name": "decision", "choice": gold, "confidence": 0.9,
+                         "probabilities": [{"value": o.key, "probability": 0.8 if o.key == gold else 0.1}
+                                           for o in ITEM.options]}],
+            "usage": {"input_tokens": 500, "output_tokens": 0, "total_tokens": 500}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system("openai-decisions").predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    url, auth, body = seen[0]
+    assert (url, auth, body["model"], body["input"]) == ("https://api.openai.com/v1/decisions", "Bearer k", "gpt-6-luna",
+                                                         ITEM.state)
+    [question] = body["questions"]
+    assert (question["type"], question["name"]) == ("choice", "decision")
+    assert question["choices"] == [{"value": o.key, "description": o.description} for o in ITEM.options]
+    assert question["instructions"].startswith(ITEM.question) and len(question["instructions"]) > len(ITEM.question)
+    assert pred.key == gold and pred.error is None and pred.probs[gold] == pytest.approx(0.8)
+    assert (pred.input_tokens, pred.extra["confidence"], pred.extra["examples_total"]) == (500, 0.9, len(SHOTS))
+    cls = info("openai-decisions")
+    assert cls.kind == "system" and cls.latency_comparable and not cls.gateway_hop
+    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (0.10, 0.0)
+
+
+def test_openai_decisions_refusal_and_unknown_choice_are_unusable():
+    from decidebench.systems.openai_decisions import parse_response
+
+    assert parse_response(ITEM, {"answers": [{"type": "refusal", "name": "decision"}]}) == (None, None, "refusal")
+    assert parse_response(ITEM, {"answers": []}) == (None, None, "missing answer")
+    key, _, error = parse_response(ITEM, {"answers": [{"type": "choice", "name": "decision", "choice": "nope"}]})
+    assert key is None and "not an option" in error
