@@ -10,6 +10,6 @@ commands. `README.md` is the writeup; its tables are generated (`decidebench.rep
 Hard rules:
 - The GPU box is `GPU_SSH` in the git-ignored `.env`. Never write its address or username into any tracked file or
   commit message.
-- After changing results on purpose: `report`, `charts`, `pin`, `pytest`, and commit results, meta, README, charts and
+- After changing results on purpose: `report`, `charts`, `pin`, `pytest`, and commit results, meta, README, charts, CHANGELOG and
   the regression test together.
 - Publishing to Hugging Face or pushing to GitHub is public: confirm with the maintainer first.
