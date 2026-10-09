@@ -236,7 +236,7 @@ def test_tev_on_together_is_a_hosted_entry_with_the_same_prompt(monkeypatch):
     assert tev.build_body(ITEM, hosted.model, 0)["messages"] == tev.build_body(ITEM, local.model, 0)["messages"]
 
 
-@pytest.mark.parametrize("entry,price", [("clef", 0.24), ("clef-flash", 0.09)])
+@pytest.mark.parametrize("entry,price", [("clef", 0.24), ("clef-flash", 0.038)])
 def test_clef_calls_ai_space_systemone_with_its_own_model_and_jev_examples(monkeypatch, entry, price):
     import asyncio
 

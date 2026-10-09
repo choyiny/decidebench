@@ -93,7 +93,7 @@ class ClefSystem(JevSystem):
 
     name = model = "clef"
     label = "Clef 27B (AI Space)"
-    pricing = Pricing(0.24, 0.0, "https://developers.cloudflare.com/workers-ai/models/clef/", "2026-10-01")
+    pricing = Pricing(0.24, 0.0, "https://developers.cloudflare.com/ai/models/%40cf/cloudflare/clef/", "2026-10-09")
     endpoint = "AI Space /v1/systemone (Cloudflare Workers AI)"
 
     def __init__(self) -> None:
@@ -105,7 +105,7 @@ class ClefSystem(JevSystem):
 class ClefFlashSystem(ClefSystem):
     name = model = "clef-flash"
     label = "Clef-Flash 9B (AI Space)"
-    pricing = Pricing(0.09, 0.0, "https://developers.cloudflare.com/ai/models/%40cf/cloudflare/clef-flash/", "2026-10-01")
+    pricing = Pricing(0.038, 0.0, "https://developers.cloudflare.com/ai/models/%40cf/cloudflare/clef-flash/", "2026-10-09")
 
 
 
