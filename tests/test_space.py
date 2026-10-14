@@ -15,8 +15,8 @@ def test_space_carries_every_entry_with_its_numbers(tmp_path):
     jev = next(r for r in rows["entries"] if r["entry"] == "jev")
     assert jev["kind"] == "decision model" and jev["hosting"] == "API" and 0.97 < jev["accuracy"] < 0.99
     assert jev["zero_shot"] is not None and set(jev["families"]) == set(rows["families"]) and len(rows["families"]) == 8
-    imajev = next(r for r in rows["entries"] if r["entry"] == "imajev-4b")
-    assert imajev["hosting"] == "self-hosted" and imajev["cost_per_1m"] > 0 and "cost" in imajev["frontier"]
+    gemma = next(r for r in rows["entries"] if r["entry"] == "jeff-gemma4")
+    assert gemma["hosting"] == "self-hosted" and gemma["cost_per_1m"] > 0 and "cost" in gemma["frontier"]
     html = (out / "index.html").read_text()
     assert "leaderboard.json" in html and "img/cost-vs-accuracy.png" in html
     assert (out / "img" / "cost-vs-accuracy.png").exists()
