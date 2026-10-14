@@ -270,7 +270,8 @@ def test_clef_calls_ai_space_systemone_with_its_own_model_and_jev_examples(monke
     assert cls.pricing.source.startswith("https://developers.cloudflare.com/")
 
 
-def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypatch):
+@pytest.mark.parametrize(("entry", "model", "price"), [("drex", "drex-v1.5", 0.05), ("drex-2", "drex-v2.0", 0.06)])
+def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypatch, entry, model, price):
     import asyncio
 
     import httpx
@@ -283,23 +284,23 @@ def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypa
 
     def handler(request):
         seen.append((str(request.url), request.headers["authorization"], json.loads(request.content)))
-        return httpx.Response(200, json={"model": "drex-v1.5", "answers": {"decision": {"choice": ITEM.options[0].key}},
+        return httpx.Response(200, json={"model": model, "answers": {"decision": {"choice": ITEM.options[0].key}},
                                          "usage": {"input_tokens": 1000, "output_tokens": 24}})
 
     async def go():
         async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
-            return await get_system("drex").predict(client, ITEM)
+            return await get_system(entry).predict(client, ITEM)
 
     pred = asyncio.run(go())
     url, auth, body = seen[0]
-    assert (url, auth, body["model"]) == ("https://drex.nace.ai/v1/systemone", "Bearer k", "drex-v1.5")
+    assert (url, auth, body["model"]) == ("https://drex.nace.ai/v1/systemone", "Bearer k", model)
     question = body["questions"][jev.QUESTION_ID]
     assert all(isinstance(v, str) for v in question["criteria"].values())
     assert question["instructions"].startswith(ITEM.question) and len(question["instructions"]) > len(ITEM.question)
     assert pred.key == ITEM.options[0].key and pred.extra["examples_total"] == len(SHOTS)
-    cls = info("drex")
+    cls = info(entry)
     assert cls.kind == "system" and cls.latency_comparable and not cls.gateway_hop
-    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (0.05, 0.0)
+    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (price, 0.0)
 
 
 def test_openai_decisions_asks_one_choice_question_with_examples_in_the_instructions(monkeypatch):
