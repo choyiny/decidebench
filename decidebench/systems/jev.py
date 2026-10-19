@@ -132,3 +132,9 @@ class Drex2System(DrexSystem):
     model = "drex-v2.0"
     label = "Drex 2.0 (Nace.AI)"
     pricing = Pricing(0.06, 0.0, "https://drex.nace.ai/docs/reference/pricing", "2026-10-14")
+
+
+class DrexMaxSystem(DrexSystem):
+    name = model = "drex-max"
+    label = "Drex Max (Nace.AI)"
+    pricing = Pricing(0.06, 0.0, "https://console.nace.ai/docs/drex/guides/drex-max", "2026-10-19")

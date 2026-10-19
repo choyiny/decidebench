@@ -270,7 +270,8 @@ def test_clef_calls_ai_space_systemone_with_its_own_model_and_jev_examples(monke
     assert cls.pricing.source.startswith("https://developers.cloudflare.com/")
 
 
-@pytest.mark.parametrize(("entry", "model", "price"), [("drex", "drex-v1.5", 0.05), ("drex-2", "drex-v2.0", 0.06)])
+@pytest.mark.parametrize(("entry", "model", "price"), [("drex", "drex-v1.5", 0.05), ("drex-2", "drex-v2.0", 0.06),
+                                                      ("drex-max", "drex-max", 0.06)])
 def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypatch, entry, model, price):
     import asyncio
 
