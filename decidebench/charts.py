@@ -30,6 +30,7 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
          "&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap")
 SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "JEV",
          "clef": "Clef", "clef-flash": "Clef-Flash", "drex-max": "Drex Max", "drex-2": "Drex 2.0", "drex": "Drex 1.5",
+         "reax-1": "REAX 1", "s1-pro": "s1-pro", "quyet-1-large": "Quyet-1.0-Large", "s1-fast": "s1-fast",
          "openai-decisions": "GPT-6 Luna (Decisions)",
          "deepseek": "DeepSeek-V4-Flash", "deepseek-41": "DeepSeek-V4.1-Flash", "glm-flash": "GLM-5.3-Flash",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",

@@ -304,6 +304,41 @@ def test_drex_calls_its_own_systemone_with_examples_in_the_instructions(monkeypa
     assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (price, 0.0)
 
 
+@pytest.mark.parametrize(("entry", "model", "price"), [("s1-fast", "s1-fast-2", 0.019), ("s1-pro", "s1-pro-3", 0.08),
+                                                      ("quyet-1-large", "quyet-1-large", 0.035),
+                                                      ("reax-1", "reax-1-20261021", 0.08)])
+def test_decision_models_calls_its_systemone_on_the_global_tier_with_pinned_models(monkeypatch, entry, model, price):
+    import asyncio
+
+    import httpx
+
+    from decidebench.registry import get_system, info
+
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: SHOTS)
+    monkeypatch.setenv("S1_API_KEY", "k")
+    seen = []
+
+    def handler(request):
+        seen.append((str(request.url), request.headers, json.loads(request.content)))
+        return httpx.Response(200, json={"model": model, "answers": {"decision": {"choice": ITEM.options[0].key}},
+                                         "usage": {"input_tokens": 1000, "output_tokens": 0}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system(entry).predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    url, headers, body = seen[0]
+    assert (url, body["model"]) == ("https://api.decisionmodels.io/v1/systemone", model)
+    assert (headers["authorization"], headers["s1-region"]) == ("Bearer k", "global")
+    criteria = body["questions"][jev.QUESTION_ID]["criteria"]
+    assert any(isinstance(v, dict) and v["examples"] for v in criteria.values())
+    assert pred.key == ITEM.options[0].key and pred.extra["examples_total"] == len(SHOTS)
+    cls = info(entry)
+    assert cls.kind == "system" and cls.latency_comparable and not cls.gateway_hop
+    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (price, 0.0)
+
+
 def test_openai_decisions_asks_one_choice_question_with_examples_in_the_instructions(monkeypatch):
     import asyncio
 

@@ -138,3 +138,42 @@ class DrexMaxSystem(DrexSystem):
     name = model = "drex-max"
     label = "Drex Max (Nace.AI)"
     pricing = Pricing(0.06, 0.0, "https://console.nace.ai/docs/drex/guides/drex-max", "2026-10-19")
+
+
+class DecisionModelsSystem(JevSystem):
+    """Decision Models' hosted open models on its JEV-compatible /v1/systemone, Peer-to-Peer (global) tier."""
+
+    endpoint = "Decision Models /v1/systemone (global tier)"
+    gateway_hop = False
+
+    def __init__(self) -> None:
+        self.variant = "default"
+        self.url = os.environ.get("S1_BASE_URL", "https://api.decisionmodels.io/v1").rstrip("/") + "/systemone"
+        self.headers = {"Authorization": f"Bearer {os.environ['S1_API_KEY']}", "S1-Region": "global"}
+
+
+class S1FastSystem(DecisionModelsSystem):
+    name = "s1-fast"
+    model = "s1-fast-2"
+    label = "s1-fast Blink v0.3 26B-A4B (Decision Models)"
+    pricing = Pricing(0.019, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
+
+
+class S1ProSystem(DecisionModelsSystem):
+    name = "s1-pro"
+    model = "s1-pro-3"
+    label = "s1-pro vLLM-SR d3 26B (Decision Models)"
+    pricing = Pricing(0.08, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
+
+
+class Quyet1LargeSystem(DecisionModelsSystem):
+    name = model = "quyet-1-large"
+    label = "Quyet-1.0-Large (Decision Models)"
+    pricing = Pricing(0.035, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
+
+
+class Reax1System(DecisionModelsSystem):
+    name = "reax-1"
+    model = "reax-1-20261021"
+    label = "REAX 1 27B (Decision Models)"
+    pricing = Pricing(0.08, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
