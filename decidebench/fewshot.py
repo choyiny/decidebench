@@ -60,7 +60,7 @@ def jaccard(a: str, b: str) -> float:
     return len(ta & tb) / len(ta | tb) if ta | tb else 0.0
 
 
-def validate_examples(items: list[Item], examples: list[Item]) -> list[str]:
+def validate_examples(items: list[Item], examples: list[Item], max_len: int = 600) -> list[str]:
     """Human-readable problems with the pool; empty means every template has exactly one valid example per option."""
     problems: list[str] = []
     ids = template_ids(items)
@@ -82,8 +82,8 @@ def validate_examples(items: list[Item], examples: list[Item]) -> list[str]:
             problems.append(f"{where} gold {e.gold!r} is not an option")
         if e.id != f"{e.pair_id}-{e.gold}":
             problems.append(f"{where} id must be <template_id>-<gold>")
-        if not 40 <= len(e.state) <= 600:
-            problems.append(f"{where} state must be 40-600 chars")
+        if not 40 <= len(e.state) <= max_len:
+            problems.append(f"{where} state must be 40-{max_len} chars")
         if e.state in test_states:
             problems.append(f"{where} state copies a test item")
         elif any(jaccard(e.state, s) >= NEAR_DUPLICATE for s in states_by_tid[e.pair_id]):
