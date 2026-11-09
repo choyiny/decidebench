@@ -167,7 +167,7 @@ def test_zero_shot_exception_is_labelled_in_tables_and_meta():
 
 
 SELF_HOSTED = ["tev", "clm", "laya-typed", "decider-2b", "kev-4b",
-               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "yev0-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
+               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "yev0-4b", "yev1-4b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
                "gliner-decide", "nimble-9b"]
 
 
@@ -268,3 +268,9 @@ def test_gliner_decide_takes_examples_in_the_criteria(monkeypatch):
     assert seen["url"] == "http://127.0.0.1:8760/v1/systemone" and seen["body"]["state"] == ITEM.state
     assert q["instructions"] == ITEM.question and q["criteria"]["none"]["examples"] == [shot.state]
     assert (pred.key, pred.extra["examples_total"]) == ("none", 1)
+
+
+def test_yev1_is_its_own_entry_on_its_own_port():
+    s = get_system("yev1-4b")
+    assert (s.name, s.model, s.url) == ("yev1-4b", "yev1-4b", "http://127.0.0.1:8781/v1/chat/completions")
+    assert "choyiny/yev1-4b@87e4278" in s.endpoint

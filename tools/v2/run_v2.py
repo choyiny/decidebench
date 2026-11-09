@@ -20,6 +20,7 @@ from decidebench.paths import load_env  # noqa: E402
 
 V2 = ROOT / "data" / "v2"
 OUT = ROOT / "results" / "v2-draft"
+EXCLUDED = {"jeff-800m", "jeff-2b", "jeff-gemma4"}  # not in v2: the pinned upstream commit is gone
 
 
 def v2_pool():
@@ -42,6 +43,8 @@ def main() -> None:
     if a.report:
         load_env()
         return report(a.entry)
+    if bad := EXCLUDED & set(a.entry):
+        ap.error(f"not part of v2: {sorted(bad)}")
     load_env()
     pool = v2_pool()
     fewshot.default_pool = lambda: pool  # every adapter's fewshot.for_item(item) now draws from the v2 pool

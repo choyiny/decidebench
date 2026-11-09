@@ -34,7 +34,7 @@ SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "J
          "openai-decisions": "GPT-6 Luna (Decisions)",
          "deepseek": "DeepSeek-V4-Flash", "deepseek-41": "DeepSeek-V4.1-Flash", "glm-flash": "GLM-5.3-Flash",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
-         "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b", "yev0-4b": "yev0-4b",
+         "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b", "yev0-4b": "yev0-4b", "yev1-4b": "yev1-4b",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
          "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B"}
 

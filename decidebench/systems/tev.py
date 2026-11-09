@@ -137,3 +137,16 @@ class Yev04bSystem(TevSystem):
         self.name = "yev0-4b"
         self.model = "yev0-4b"
         self.url = os.environ.get("YEV_BASE_URL", "http://127.0.0.1:8780/v1").rstrip("/") + "/chat/completions"
+
+
+class Yev14bSystem(TevSystem):
+    """yev1-4b, yev0-4b's successor (2-10 options), behind `yev serve`'s chat endpoint on the transformers engine."""
+
+    label = "yev1-4b (self-hosted)"
+    endpoint = "yev serve (choyiny/yev1-4b@87e4278, chat endpoint) on an NVIDIA L4 (CUDA)"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "yev1-4b"
+        self.model = "yev1-4b"
+        self.url = os.environ.get("YEV1_BASE_URL", "http://127.0.0.1:8781/v1").rstrip("/") + "/chat/completions"
