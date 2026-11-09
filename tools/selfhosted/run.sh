@@ -72,7 +72,7 @@ fi
 shared=$(others)
 [ -z "$shared" ] || { echo "[$group] another process used the GPU during the run; timing is not clean:" >&2; echo "$shared" >&2; exit 1; }
 if [ "${DECIDEBENCH_SET:-v1}" = v2 ]; then
-  rsync -a "$GPU_SSH:decidebench-tmp/repo/results/v2-draft/" results/v2-draft/
+  rsync -a "$GPU_SSH:decidebench-tmp/repo/results/v2/" results/v2/
   echo "[$group] done: $entries"; exit 0
 fi
 for e in $entries; do

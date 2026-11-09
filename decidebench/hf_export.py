@@ -10,7 +10,7 @@ import shutil
 from pathlib import Path
 
 from decidebench.dataset import CANARY
-from decidebench.paths import DATA_DIR, ROOT
+from decidebench.paths import DATA_DIR, ROOT, V2_DATA_DIR
 
 REPO = "https://github.com/choyiny/decidebench"
 
@@ -33,11 +33,19 @@ configs:
 - config_name: default
   data_files:
   - split: test
-    path: data/test.jsonl
+    path: data/v2/test.jsonl
 - config_name: examples
   data_files:
   - split: train
-    path: data/examples.jsonl
+    path: data/v2/examples.jsonl
+- config_name: v1
+  data_files:
+  - split: test
+    path: data/v1/test.jsonl
+- config_name: v1-examples
+  data_files:
+  - split: train
+    path: data/v1/examples.jsonl
 ---
 
 """
@@ -49,17 +57,21 @@ def _jsonl(paths) -> list[str]:
 
 def card(readme: str) -> str:
     """The README as a dataset card: generated-block markers dropped, charts local, repository links absolute."""
-    text = re.sub(r"<!-- GEN:\w+:(START|END) -->\n", "", readme)
+    text = re.sub(r"<!-- GEN:[\w-]+:(START|END) -->\n", "", readme)
     text = text.replace("](docs/img/", "](img/")
     return re.sub(r"\]\((?!https?://|img/|#)([^)]+)\)", lambda m: f"]({REPO}/tree/main/{m.group(1)})", text)
 
 
-def export(out_dir: Path = ROOT / "build" / "hf", data_dir: Path = DATA_DIR) -> Path:
-    (out_dir / "data").mkdir(parents=True, exist_ok=True)
-    (out_dir / "img").mkdir(exist_ok=True)
-    (out_dir / "data" / "test.jsonl").write_text("\n".join(_jsonl(sorted(data_dir.glob("*.jsonl")))) + "\n")
-    (out_dir / "data" / "examples.jsonl").write_text(
-        "\n".join(_jsonl(sorted((data_dir / "examples").glob("*.jsonl")))) + "\n")
+def export(out_dir: Path = ROOT / "build" / "hf",
+           data_dirs: dict[str, Path] | None = None) -> Path:
+    """data/<version>/test.jsonl and examples.jsonl for each version; v2 is the default config."""
+    data_dirs = data_dirs or {"v1": DATA_DIR, "v2": V2_DATA_DIR}
+    (out_dir / "img").mkdir(parents=True, exist_ok=True)
+    for version, data_dir in data_dirs.items():
+        d = out_dir / "data" / version
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "test.jsonl").write_text("\n".join(_jsonl(sorted(data_dir.glob("*.jsonl")))) + "\n")
+        (d / "examples.jsonl").write_text("\n".join(_jsonl(sorted((data_dir / "examples").glob("*.jsonl")))) + "\n")
     for png in (ROOT / "docs" / "img").glob("*.png"):
         shutil.copy(png, out_dir / "img" / png.name)
     body = card((ROOT / "README.md").read_text())

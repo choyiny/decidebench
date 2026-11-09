@@ -13,7 +13,7 @@ from pathlib import Path
 
 from decidebench.dataset import load_items
 from decidebench.meta import load_meta
-from decidebench.paths import RESULTS_DIR, ROOT, load_env, results_path
+from decidebench.paths import RESULTS_DIR, ROOT, V2_DATA_DIR, V2_RESULTS_DIR, load_env, results_path
 from decidebench.registry import ENTRIES, info
 from decidebench.report import fronts, label, prepare, short
 
@@ -38,7 +38,8 @@ SHORT = {"tev": "TEV (self-hosted)", "jev": "JEV",
          "clef-27b": "Clef 27B", "clef-flash-9b": "Clef-Flash 9B", "pplx-decider": "pplx-decider",
          "pplx-decider-flash": "pplx-decider-flash", "openjev-flash-9b": "OpenJev Flash 9B",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
-         "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B"}
+         "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B",
+         "claude-opus-4-8": "Claude Opus 4.8"}
 
 
 def text(x, y, s, size=12, fill=INK, family=SANS, weight=400, anchor="start", extra=""):
@@ -215,12 +216,13 @@ def plottable(entry: str, results_dir: Path = RESULTS_DIR) -> bool:
     return results_path(entry, results_dir).exists() and (load_meta(entry, results_dir) or {}).get("status") in PLOTTED_STATUSES
 
 
-def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_ticks, x_tick_fmt, x_point_fmt):
+def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_ticks, x_tick_fmt, x_point_fmt,
+                     a_lo=85.0, y_ticks=(85, 90, 95, 100)):
     """Accuracy against a log-scaled cost or latency axis. API entries are points; the dashed line joins the ones
     on the Pareto frontier. Baselines cost nothing and take no time, so they are listed under the plot."""
     dy = 76
     h = 528 - dy
-    a_lo, a_hi = 85.0, 100.0
+    a_hi = 100.0
 
     def placeable(p):
         v, acc = x_of(summ[p]), summ[p]["acc"]
@@ -258,7 +260,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
 
     s.append(text(24, 276, "ACCURACY", 12, MUTED, MONO, 500, "middle", 'letter-spacing="0.14em" transform="rotate(-90 24 276)"'))
     s.append(text((x0 + x1) // 2, 484, x_label.upper(), 12, MUTED, MONO, 500, "middle", 'letter-spacing="0.14em"'))
-    for acc in (85, 90, 95, 100):
+    for acc in y_ticks:
         y = Y(acc)
         s.append(f'<line x1="{x0}" y1="{y}" x2="{x1}" y2="{y}" stroke="{GRID}" stroke-width="0.8"/>')
         s.append(text(x0 - 12, y + 4, f"{acc}%", 12, MUTED, MONO, 400, "end"))
@@ -415,28 +417,38 @@ def render_png(html: Path, png: Path, height: int, width: int = W) -> None:
 
 
 def main() -> None:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--set", choices=("v1", "v2"), default="v1", help="v2 writes docs/img/v2-*.png")
+    a = ap.parse_args()
     load_env()
-    items = load_items()
-    specs = [e for e in ENTRIES if plottable(e)]
-    by_id, common, _, summ = prepare(specs, items)
+    if a.set == "v2":
+        items, results_dir, prefix, cost_hi, cost_ticks = load_items(V2_DATA_DIR), V2_RESULTS_DIR, "v2-", 50000, (10, 100, 1000, 10000)
+        axis = {"a_lo": 80.0, "y_ticks": (80, 85, 90, 95, 100)}
+    else:
+        items, results_dir, prefix, cost_hi, cost_ticks = load_items(), RESULTS_DIR, "", 1000, (10, 100, 1000)
+        axis = {}
+    specs = [e for e in ENTRIES if plottable(e, results_dir)]
+    by_id, common, _, summ = prepare(specs, items, results_dir)
     fr = fronts(summ)
     DIAGRAMS.mkdir(parents=True, exist_ok=True)
     IMG.mkdir(parents=True, exist_ok=True)
     charts = {
         "cost-vs-accuracy": frontier_scatter(
-            "cost-vs-accuracy", "Cost vs accuracy", summ, fr["cost"], lambda v: v["cost_task"] * 1e6,
-            "Cost per 1M tasks (log scale)", 2, 1000, (10, 100, 1000), lambda c: f"${c:,}", lambda c: f"${c:,.0f}"),
+            f"{prefix}cost-vs-accuracy", "Cost vs accuracy", summ, fr["cost"], lambda v: v["cost_task"] * 1e6,
+            "Cost per 1M tasks (log scale)", 2, cost_hi, cost_ticks, lambda c: f"${c:,}", lambda c: f"${c:,.0f}", **axis),
         "latency-vs-accuracy": frontier_scatter(
-            "latency-vs-accuracy", "Latency vs accuracy", latency_view(summ), fr["latency"], lambda v: v["p50"],
+            f"{prefix}latency-vs-accuracy", "Latency vs accuracy", latency_view(summ), fr["latency"], lambda v: v["p50"],
             "Median latency per call (log scale)", 100, 10000, (100, 1000, 10000),
-            lambda ms: f"{ms:,} ms", lambda ms: f"{ms:,.0f} ms"),
-        "errors-cost-latency": errors_cost_latency("errors-cost-latency", summ),
+            lambda ms: f"{ms:,} ms", lambda ms: f"{ms:,.0f} ms", **axis),
+        "errors-cost-latency": errors_cost_latency(f"{prefix}errors-cost-latency", summ),
     }
     for name, (html, h, *w) in charts.items():
-        src = DIAGRAMS / f"{name}.html"
+        src = DIAGRAMS / f"{prefix}{name}.html"
         src.write_text(html)
-        render_png(src, IMG / f"{name}.png", h, *w)
-        print(f"docs/img/{name}.png")
+        render_png(src, IMG / f"{prefix}{name}.png", h, *w)
+        print(f"docs/img/{prefix}{name}.png")
 
 
 if __name__ == "__main__":

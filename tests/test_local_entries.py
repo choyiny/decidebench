@@ -53,7 +53,7 @@ def test_clm_speaks_the_jev_systemone_protocol(monkeypatch):
 def test_local_entries_stay_off_both_frontiers():
     summ = {"jev": {"cost_task": 1e-5, "p50": 175.0, "acc": 0.90},
             "clm": {"cost_task": math.nan, "p50": 50.0, "acc": 0.99}}
-    assert fronts(summ) == {"cost": {"jev"}, "latency": {"jev"}}
+    assert fronts(summ) == {"cost": {"jev"}, "latency": {"jev"}, "self-hosted cost": set()}
 
 
 def test_tables_say_not_priced_and_local(tmp_path):

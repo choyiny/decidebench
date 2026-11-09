@@ -23,5 +23,5 @@
   "run_date": "2026-11-09",
   "harness_commit": "decidebench@a85fb77",
   "protocol": "few-shot: one example per option",
-  "status": "self_reported"
+  "status": "verified"
 }
