@@ -140,10 +140,10 @@ class Yev04bSystem(TevSystem):
 
 
 class Yev14bSystem(TevSystem):
-    """yev1-4b, yev0-4b's successor (2-10 options), behind `yev serve`'s chat endpoint on the transformers engine."""
+    """yev1-4b, yev0-4b's successor (2-10 options), behind `yev serve`'s chat endpoint with a vLLM sidecar."""
 
     label = "yev1-4b (self-hosted)"
-    endpoint = "yev serve (choyiny/yev1-4b@87e4278, chat endpoint) on an NVIDIA L4 (CUDA)"
+    endpoint = "yev serve --backend vllm (vLLM 0.31, choyiny/yev1-4b@87e4278, chat endpoint) on an NVIDIA L4 (CUDA)"
 
     def __init__(self) -> None:
         super().__init__()

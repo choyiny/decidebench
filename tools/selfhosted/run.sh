@@ -25,7 +25,7 @@ if [ "$group" = setup ]; then
   exit 0
 fi
 
-conc=4; ready=''
+conc=4; ready=''; image=''
 case $group in
   tev)     entries="tev tev.zero_shot";           health="http://127.0.0.1:8092/v1/models" ;;
   clm)     entries="clm";                         health="http://127.0.0.1:8700/health" ;;
@@ -43,9 +43,10 @@ case $group in
   gliner)  entries="gliner-decide";               health="http://127.0.0.1:8760/v1/models" ;;
   nimble)  entries="nimble-9b";                  health="http://127.0.0.1:8770/v1/models" ;;
   yev)     entries="yev0-4b";                     health="http://127.0.0.1:8780/health" ;;
-  yev1)    entries="yev1-4b";                     health="http://127.0.0.1:8781/health" ;;
+  yev1)    entries="yev1-4b"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8781/health" ;;
   *) echo "unknown group $group" >&2; exit 1 ;;
 esac
+IMAGE=${image:-$IMAGE}
 
 others() { remote "for p in \$(nvidia-smi --query-compute-apps=pid --format=csv,noheader); do ps -o user=,pid=,args= -p \$p; done" | grep -v '^root ' || true; }
 busy=$(remote "for p in \$(nvidia-smi --query-compute-apps=pid --format=csv,noheader); do ps -o user=,pid=,args= -p \$p; done")
