@@ -45,12 +45,12 @@ def test_crowded_scatter_labels_every_point():
             "glm-flash": {"cost_task": 7.2e-5, "p50": 615.0, "acc": 0.985},
             "imajev-4b": {"cost_task": 1.04e-4, "p50": 1045.0, "acc": 0.98},
             "deepseek-41": {"cost_task": 1.72e-4, "p50": 404.0, "acc": 0.985},
-            "tev-together": {"cost_task": 7.82e-4, "p50": 841.0, "acc": 0.9925},
+            "drex-2": {"cost_task": 7.82e-4, "p50": 841.0, "acc": 0.9925},
             "gliner-decide": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
     html, _ = frontier_scatter("c", "t", summ, {"tev", "jev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
     for name in ("TEV (self-hosted)", "JEV", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "imajev-4b", "DeepSeek-V4.1-Flash",
-                 "TEV (Together)", "GLiNER2.5-Decide", "Nimble-9B"):
+                 "Drex 2.0", "GLiNER2.5-Decide", "Nimble-9B"):
         assert f">{name}</text>" in html, name
 
 
@@ -147,7 +147,7 @@ def _segment_hits_box(a, b, box, steps=40):
 
 
 CROWD = {"jev": (304, 172), "tev": (412, 276), "gliner-decide": (724, 144), "deepseek": (492, 140),
-         "glm-flash": (488, 152), "laya-typed": (512, 188), "deepseek-41": (576, 152), "tev-together": (720, 156),
+         "glm-flash": (488, 152), "laya-typed": (512, 188), "deepseek-41": (576, 152), "drex-2": (720, 156),
          "decider-4b": (680, 212), "kev-9b": (432, 320)}
 
 
@@ -199,7 +199,7 @@ def _gap(box, x, y):
 
 LATENCY_CROWD = {"jev": (408, 172), "gliner-decide": (640, 144), "deepseek": (564, 140),
                  "glm-flash": (404, 152), "laya-typed": (392, 188), "deepseek-41": (308, 152),
-                 "tev-together": (408, 156), "decider-4b": (408, 212),}
+                 "drex-2": (408, 156), "decider-4b": (408, 212),}
 
 
 def test_labels_without_a_leader_sit_nearer_their_own_point_than_any_other():
@@ -222,9 +222,9 @@ def test_a_label_is_clearly_nearer_its_own_point_than_a_neighbours():
     from decidebench.charts import PLACE, label_boxes, leader, place_labels
 
     crowd = {"deepseek": (564, 140), "deepseek-41": (308, 152), "glm-flash": (404, 152), "jev": (400, 172),
-             "tev-together": (216, 272)}
+             "drex-2": (216, 272)}
     texts = {p: (n, "", 13) for p, n in (("deepseek", "DeepSeek-V4-Flash"), ("deepseek-41", "DeepSeek-V4.1-Flash"),
-                                          ("glm-flash", "GLM-5.3-Flash"), ("tev-together", "TEV (Together)"))}
+                                          ("glm-flash", "GLM-5.3-Flash"), ("drex-2", "Drex 2.0"))}
     texts["jev"] = ("JEV", "98.0% · 639 ms", 16)
     placed = place_labels(crowd, texts, preferred=PLACE, bounds=(8, 84, 872, 456))
     boxes = label_boxes(crowd, texts, placed)

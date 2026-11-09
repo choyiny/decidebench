@@ -1,4 +1,5 @@
-"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff, GLiNER2 and Nimble."""
+"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff, GLiNER2, Nimble,
+Clef, pplx-decider and OpenJev."""
 
 from __future__ import annotations
 
@@ -122,3 +123,43 @@ class Nimble9bSystem(OpenJevSystem):
     label = "Bespoke-Nimble-9B (self-hosted)"
     endpoint = "tools/nimble/serve.py (bespokelabs/Bespoke-Nimble-9B) on an NVIDIA L4 (CUDA)"
     env_url, default_url = "NIMBLE_BASE_URL", "http://127.0.0.1:8770/v1"
+
+
+class Clef27bSystem(OpenJevSystem):
+    name = "clef-27b"
+    served_name = "clef"
+    label = "Clef 27B (self-hosted)"
+    endpoint = "SGLang dev-clef /v1/systemone (Cloudflare/clef@cfddda0) on an NVIDIA L4 (CUDA)"
+    env_url, default_url = "CLEF_BASE_URL", "http://127.0.0.1:30000/v1"
+
+
+class ClefFlash9bSystem(OpenJevSystem):
+    name = "clef-flash-9b"
+    served_name = "clef-flash"
+    label = "Clef-Flash 9B (self-hosted)"
+    endpoint = "SGLang dev-clef /v1/systemone (Cloudflare/clef-flash@fb4417d) on an NVIDIA L4 (CUDA)"
+    env_url, default_url = "CLEF_FLASH_BASE_URL", "http://127.0.0.1:30001/v1"
+
+
+class PplxDeciderSystem(OpenJevSystem):
+    name = "pplx-decider"
+    served_name = "pplx-decider-v1.2"
+    label = "pplx-decider v1.2 27B (self-hosted)"
+    endpoint = "tools/pplx/serve.py (perplexity-ai/pplx-decider-v1.2@cce0f3f, fast path) on an NVIDIA L4 (CUDA)"
+    env_url, default_url = "PPLX_DECIDER_BASE_URL", "http://127.0.0.1:8790/v1"
+
+
+class PplxDeciderFlashSystem(OpenJevSystem):
+    name = "pplx-decider-flash"
+    served_name = "pplx-decider-flash-v1.2"
+    label = "pplx-decider-flash v1.2 4B (self-hosted)"
+    endpoint = "tools/pplx/serve.py (perplexity-ai/pplx-decider-flash-v1.2@9ff7cf9, fast path) on an NVIDIA L4 (CUDA)"
+    env_url, default_url = "PPLX_DECIDER_FLASH_BASE_URL", "http://127.0.0.1:8791/v1"
+
+
+class OpenJevFlash9bSystem(OpenJevSystem):
+    name = "openjev-flash-9b"
+    served_name = "openjev-flash-9b"
+    label = "OpenJev Flash 9B (self-hosted)"
+    endpoint = "OpenJev helper/shim.py + vLLM 0.29 FP8 (openjev/OpenJev-Flash-9B@b77b0ff) on an NVIDIA L4 (CUDA)"
+    env_url, default_url = "OPENJEV_FLASH_BASE_URL", "http://127.0.0.1:8800/v1"

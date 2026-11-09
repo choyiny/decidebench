@@ -133,6 +133,7 @@ let data;
 
 const cols = () => [
   {key: "name", label: "Model", sort: r => r.name, dir: 1},
+  {key: "company", label: "Company", sort: r => r.company || "~", dir: 1, cell: r => r.company || '<span class="dim">–</span>'},
   {key: "accuracy", label: "Accuracy", sort: r => r.accuracy,
    cell: r => `<div class="acc"><span class="bar"><i style="width:${(100 * r.accuracy).toFixed(1)}%"></i></span>${r.shown.accuracy}</div>`},
   {key: "pair_accuracy", label: "Pair acc.", sort: r => r.pair_accuracy, cell: r => r.shown.pair_accuracy},

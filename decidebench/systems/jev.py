@@ -166,12 +166,6 @@ class S1ProSystem(DecisionModelsSystem):
     pricing = Pricing(0.08, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
 
 
-class Quyet1LargeSystem(DecisionModelsSystem):
-    name = model = "quyet-1-large"
-    label = "Quyet-1.0-Large (Decision Models)"
-    pricing = Pricing(0.035, 0.0, "https://decisionmodels.io/pricing", "2026-10-25")
-
-
 class Reax1System(DecisionModelsSystem):
     name = "reax-1"
     model = "reax-1-20261021"

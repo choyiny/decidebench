@@ -108,23 +108,6 @@ class TevSystem:
         )
 
 
-class TevTogetherSystem(TevSystem):
-    """The same TEV served by Together, at its list price: the hosted counterpart of the self-hosted entry, with
-    latency measured over the network like every other hosted entry."""
-
-    label = "TEV (Together)"
-    pricing = Pricing(0.042, 0.0, "https://x.com/togethercompute/status/2102882216950763814", "2026-09-28")
-    endpoint = "Together AI serverless /v1/chat/completions"
-    latency_comparable = True
-
-    def __init__(self, variant: str = "default") -> None:
-        super().__init__(variant)
-        self.name = "tev-together" if variant == "default" else f"tev-together.{variant}"
-        self.model = "together/Tev1-4B-experimental"
-        self.url = "https://api.together.ai/v1/chat/completions"
-        self.headers = {"Authorization": f"Bearer {os.environ['TOGETHER_API_KEY']}"}
-
-
 class Yev04bSystem(TevSystem):
     """yev0-4b, a Qwen3.5-4B model trained on TEV's prompt format, behind `yev serve`'s chat endpoint, which returns
     the calibrated letter probabilities from one forward pass."""

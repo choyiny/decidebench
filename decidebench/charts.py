@@ -28,13 +28,15 @@ GRID, AXIS = "rgba(45,49,66,0.08)", "rgba(45,49,66,0.25)"
 SANS, MONO = "'Geist', system-ui, sans-serif", "'Geist Mono', ui-monospace, monospace"
 FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
          "&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap")
-SHORT = {"tev": "TEV (self-hosted)", "tev-together": "TEV (Together)", "jev": "JEV",
+SHORT = {"tev": "TEV (self-hosted)", "jev": "JEV",
          "clef": "Clef", "clef-flash": "Clef-Flash", "drex-max": "Drex Max", "drex-2": "Drex 2.0", "drex": "Drex 1.5",
-         "reax-1": "REAX 1", "s1-pro": "s1-pro", "quyet-1-large": "Quyet-1.0-Large", "s1-fast": "s1-fast",
+         "reax-1": "REAX 1", "s1-pro": "s1-pro", "s1-fast": "s1-fast",
          "openai-decisions": "GPT-6 Luna (Decisions)",
          "deepseek": "DeepSeek-V4-Flash", "deepseek-41": "DeepSeek-V4.1-Flash", "glm-flash": "GLM-5.3-Flash",
          "clm": "CLM-v0.1-8B", "laya-typed": "Laya typed-decisions", "decider-2b": "Decider-2B", "kev-4b": "Kev-4B",
          "decider-4b": "Decider-4B", "kev-9b": "Kev-9B", "jevk5": "JevK5", "imajev-4b": "imajev-4b", "yev0-4b": "yev0-4b", "yev1-4b": "yev1-4b",
+         "clef-27b": "Clef 27B", "clef-flash-9b": "Clef-Flash 9B", "pplx-decider": "pplx-decider",
+         "pplx-decider-flash": "pplx-decider-flash", "openjev-flash-9b": "OpenJev Flash 9B",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
          "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B"}
 

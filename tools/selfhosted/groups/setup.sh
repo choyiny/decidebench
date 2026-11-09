@@ -21,6 +21,11 @@ snapshot_download('fastino/GLiNER2.5-Decide', revision='5a7adf7')
 snapshot_download('bespokelabs/Bespoke-Nimble-9B', revision='bd792f4', local_dir='/work/nimble-model')
 snapshot_download('choyiny/yev0-4b', revision='4c0c7b9', local_dir='/work/yev-model')
 snapshot_download('choyiny/yev1-4b', revision='87e4278', local_dir='/work/yev1-model')
+snapshot_download('Cloudflare/clef', revision='cfddda043dd190ef3b01cff449d5ee8cff1e8ec6', local_dir='/work/clef-model')
+snapshot_download('Cloudflare/clef-flash', revision='fb4417d31c1d0f9e7e77f1141b40aaede7491e00', local_dir='/work/clef-flash-model')
+snapshot_download('perplexity-ai/pplx-decider-v1.2', revision='cce0f3f80033e9d89d80831d5281fd72124aacce', local_dir='/work/pplx-model')
+snapshot_download('perplexity-ai/pplx-decider-flash-v1.2', revision='9ff7cf9838e59df461c276b7699d56b244d2af58', local_dir='/work/pplx-flash-model')
+snapshot_download('openjev/OpenJev-Flash-9B', revision='b77b0fff67c77a76c16d4da50a66d2fdbc124fae', local_dir='/work/openjev-flash-model')
 snapshot_download('Qwen/Qwen3.5-9B', revision='c202236235762e1c871ad0ccb60c8ee5ba337b9a')
 PY
-echo "setup ok: CLM $(git -C CLM rev-parse --short HEAD), laya $(git -C laya-upstream rev-parse --short HEAD), kev $(git -C kev rev-parse --short HEAD), imajev $(git -C imajev rev-parse --short HEAD), jevk5 $(git -C jevk5 rev-parse --short HEAD), yev $(git -C yev rev-parse --short HEAD), yev1 $(git -C yev1 rev-parse --short HEAD); decider-2b, decider-4b, JevK5, imajev-4b, Julia-1, GLiNER2.5-Decide, Nimble, yev0-4b, yev1-4b fetched"
+echo "setup ok: CLM $(git -C CLM rev-parse --short HEAD), laya $(git -C laya-upstream rev-parse --short HEAD), kev $(git -C kev rev-parse --short HEAD), imajev $(git -C imajev rev-parse --short HEAD), jevk5 $(git -C jevk5 rev-parse --short HEAD), yev $(git -C yev rev-parse --short HEAD), yev1 $(git -C yev1 rev-parse --short HEAD); decider-2b, decider-4b, JevK5, imajev-4b, Julia-1, GLiNER2.5-Decide, Nimble, yev0-4b, yev1-4b, Clef, Clef-Flash, pplx-decider, pplx-decider-flash, OpenJev-Flash-9B fetched"

@@ -20,7 +20,7 @@ def test_export_carries_examples_charts_and_the_readme_as_its_card(tmp_path):
         assert (out / "img" / png).stat().st_size > 10_000
     card = (out / "README.md").read_text()
     assert "config_name: examples" in card and "path: data/examples.jsonl" in card
-    assert "| Entry | Accuracy |" in card
+    assert "| Entry | Company | Accuracy |" in card
     assert "](img/cost-vs-accuracy.png)" in card and "docs/img/" not in card
     assert "](https://github.com/choyiny/decidebench/tree/main/tools/selfhosted/README.md)" in card
     assert "<!-- GEN:" not in card
