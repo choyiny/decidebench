@@ -6,7 +6,7 @@ import os
 
 from decidebench.references.frontier import FrontierSystem
 from decidebench.references.together import TogetherChatSystem
-from decidebench.types import L4
+from decidebench.types import SELF_HOSTED
 
 
 class VllmChatSystem(FrontierSystem):
@@ -14,8 +14,8 @@ class VllmChatSystem(FrontierSystem):
 
     kind = "reference"
     params = TogetherChatSystem.params
-    pricing = L4
-    endpoint = "vLLM 0.23 (OpenAI chat) on a DGX Spark (CUDA)"
+    pricing = SELF_HOSTED
+    endpoint = "vLLM 0.23 (OpenAI chat) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
     gateway_hop = False
     latency_comparable = False
     url_env, port = "", 0

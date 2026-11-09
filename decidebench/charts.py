@@ -24,6 +24,7 @@ W = 880
 
 PAPER, INK, MUTED, SOFT = "#f5f5f5", "#2d3142", "#4f5d75", "#7a8399"
 ACCENT = "#eb6c36"
+SELF = "#2f8f6b"  # self-hosted: data stays on your own hardware
 GRID, AXIS = "rgba(45,49,66,0.08)", "rgba(45,49,66,0.25)"
 SANS, MONO = "'Geist', system-ui, sans-serif", "'Geist Mono', ui-monospace, monospace"
 FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
@@ -233,6 +234,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     skipped = [p for p in others if not placeable(p)]
     below = sorted((p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo), key=lambda p: -summ[p]["acc"])
     api = [p for p in others if p not in skipped and p not in below]
+    self_hosted = {p for p in api if getattr(getattr(info(p), "pricing", None), "basis", "") == "gpu_hours"}
     name = {p: SHORT.get(p) or short(p) for p in api}
     desc = (f"Scatter plot of accuracy against {x_label.lower()}: "
             + ", ".join(f"{name[p]} {100 * summ[p]['acc']:.1f}% at {x_point_fmt(x_of(summ[p]))}" for p in api)
@@ -245,7 +247,8 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
             f"{SHORT.get(p) or short(p)} {100 * summ[p]['acc']:.1f}%" for p in below) + ".")
     if skipped:
         notes.append("Not plotted on this axis (self-hosted latency, or no usable answers): " + ", ".join(SHORT.get(p) or short(p) for p in skipped) + ".")
-    footer = [line for note in notes + ["Dashed line: Pareto frontier."]
+    legend = "Orange: API (requests go to the provider). Green: self-hosted (data stays on your hardware). Dashed line: Pareto frontier."
+    footer = [line for note in notes + [legend]
               for line in textwrap.wrap(note, int((W - 16 - 112) / (12 * 0.55)), break_on_hyphens=False)]
     h += 18 * (len(footer) - 1)
     s = header(slug, title, desc, h, dy)
@@ -291,7 +294,8 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     dots_at = len(s)
     for p in sorted(api, key=lambda p: p in systems):
         x, y = xy[p]
-        r, fill, stroke = (6, "rgba(235,108,54,0.15)", ACCENT) if p in systems else (5, "rgba(79,93,117,0.20)", MUTED)
+        r, fill, stroke = ((6, "rgba(47,143,107,0.18)", SELF) if p in self_hosted
+                           else (6, "rgba(235,108,54,0.15)", ACCENT) if p in systems else (5, "rgba(79,93,117,0.20)", MUTED))
         s += [f'<circle cx="{x}" cy="{y}" r="{r}" fill="{PAPER}"/>',
               f'<circle cx="{x}" cy="{y}" r="{r}" fill="{fill}" stroke="{stroke}" stroke-width="1.2"/>']
     for p in sorted(at, key=lambda p: p in systems):
@@ -315,7 +319,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
 
 
 
-def errors_cost_latency(slug, summ, ref="jev", ready=0.90):
+def errors_cost_latency(slug, summ, ref="jev", ready=0.90, gpu_note="an NVIDIA L4 at $0.81/h"):
     """Every entry, fewest errors first: wrong answers per 100 decisions, cost per 1M tasks and median latency on one
     shared row order, each followed by its multiple of `ref`'s, with a dashed line at the `ready` accuracy. Self-hosted bars are hatched:
     their cost is GPU time and their latency has no network in it, so it gets no multiple."""
@@ -346,7 +350,7 @@ def errors_cost_latency(slug, summ, ref="jev", ready=0.90):
     s.append('<defs>' + "".join(
         f'<pattern id="hatch-{k}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
         f'<rect width="6" height="6" fill="{bg}"/><line x1="0" y1="0" x2="0" y2="6" stroke="{c}" stroke-width="2.5"/></pattern>'
-        for k, c, bg in (("system", ACCENT, "rgba(235,108,54,0.25)"), ("reference", MUTED, "rgba(79,93,117,0.25)")))
+        for k, c, bg in (("system", SELF, "rgba(47,143,107,0.25)"), ("reference", MUTED, "rgba(79,93,117,0.25)")))
         + '</defs>')
 
     def nice(v, step):
@@ -398,10 +402,11 @@ def errors_cost_latency(slug, summ, ref="jev", ready=0.90):
     for i, p in enumerate(rows):
         y = top + i * row_h + row_h / 2
         s.append(text(24, y + 4, name[p], 13, INK, SANS, 600 if p == ref else 500))
-    notes = ["400 test items, so each wrong answer adds 0.25 per 100. " + "".join(
+    n = summ[ref]["n"]
+    notes = [f"{n} test items, so each wrong answer adds {100 / n:.2g} per 100. " + "".join(
              f"{label(b)} gets {100 * (1 - summ[b]['acc']):.2f} wrong per 100 (not shown). " for b in base)
-             + "Hatched: self-hosted. Its cost is NVIDIA L4 time at "
-             "$0.81/h, and its latency is measured on the GPU box with no network, so it is not compared with JEV.",
+             + f"Hatched green: self-hosted. Its cost is GPU time on {gpu_note}, and its latency is measured on the GPU "
+             "box with no network, so it is not compared with JEV.",
              "Source: github.com/choyiny/decidebench"]
     for j, line in enumerate(l for n in notes for l in textwrap.wrap(n, 168)):
         s.append(text(24, y_axis + 68 + 18 * j, line, 12, SOFT, SANS))
@@ -426,9 +431,11 @@ def main() -> None:
     if a.set == "v2":
         items, results_dir, prefix, cost_hi, cost_ticks = load_items(V2_DATA_DIR), V2_RESULTS_DIR, "v2-", 50000, (10, 100, 1000, 10000)
         axis = {"a_lo": 80.0, "y_ticks": (80, 85, 90, 95, 100)}
+        gpu_note = "an NVIDIA RTX PRO 6000 Blackwell at $3.36/h"
     else:
         items, results_dir, prefix, cost_hi, cost_ticks = load_items(), RESULTS_DIR, "", 1000, (10, 100, 1000)
         axis = {}
+        gpu_note = "an NVIDIA L4 at $0.81/h"
     specs = [e for e in ENTRIES if plottable(e, results_dir)]
     by_id, common, _, summ = prepare(specs, items, results_dir)
     fr = fronts(summ)
@@ -442,7 +449,7 @@ def main() -> None:
             f"{prefix}latency-vs-accuracy", "Latency vs accuracy", latency_view(summ), fr["latency"], lambda v: v["p50"],
             "Median latency per call (log scale)", 100, 10000, (100, 1000, 10000),
             lambda ms: f"{ms:,} ms", lambda ms: f"{ms:,.0f} ms", **axis),
-        "errors-cost-latency": errors_cost_latency(f"{prefix}errors-cost-latency", summ),
+        "errors-cost-latency": errors_cost_latency(f"{prefix}errors-cost-latency", summ, gpu_note=gpu_note),
     }
     for name, (html, h, *w) in charts.items():
         src = DIAGRAMS / f"{prefix}{name}.html"

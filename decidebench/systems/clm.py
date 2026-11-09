@@ -5,14 +5,14 @@ from __future__ import annotations
 import os
 
 from decidebench.systems.jev import JevSystem
-from decidebench.types import L4
+from decidebench.types import SELF_HOSTED
 
 
 class ClmSystem(JevSystem):
     label = "CLM-v0.1-8B (self-hosted)"
     kind = "system"
-    pricing = L4
-    endpoint = "clm-serve @ Contrastive-LM/CLM bb42c6c over vLLM pooling (Qwen3-8B) on an NVIDIA L4 (CUDA)"
+    pricing = SELF_HOSTED
+    endpoint = "clm-serve @ Contrastive-LM/CLM bb42c6c over vLLM pooling (Qwen3-8B) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
     gateway_hop = False
     latency_comparable = False
     takes_examples = False

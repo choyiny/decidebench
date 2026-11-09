@@ -39,11 +39,11 @@ def test_fronts_include_zero_cost_baselines():
 def test_results_table_sorts_by_accuracy_and_keeps_the_floor_last():
     specs = [e for e in ENTRIES if results_path(e).exists()]
     lines = render(specs, load_items())["results"].splitlines()
-    assert lines[0] == ("| Entry | Company | Accuracy | Pair accuracy | Zero-shot accuracy | Cost per 1M tasks | "
-                        "Latency p50 | Frontier |")
+    assert lines[0] == ("| Entry | Company | Hosting | Accuracy | Pair accuracy | Zero-shot accuracy | "
+                        "Cost per 1M tasks | Latency p50 | Frontier |")
     rows = [l.split(" | ") for l in lines[2:]]
     assert len(rows) == len(specs) and rows[-1][0] == "| Random"
-    acc = [float(r[2].rstrip("%")) for r in rows[:-1]]
+    acc = [float(r[3].rstrip("%")) for r in rows[:-1]]
     assert acc == sorted(acc, reverse=True)
     assert "Time for all" not in lines[0]
 
@@ -61,7 +61,7 @@ def test_zero_shot_column_shows_the_variant_run_or_the_exception(tmp_path):
     zero_shot = {"extra": {"examples_shown": 0, "examples_total": 0}, "model": "l"}
     (tmp_path / "laya-typed.jsonl").write_text("".join(json.dumps(r | zero_shot) + "\n" for r in rows))
     lines = render(["tev", "laya-typed", "random"], items, tmp_path)["results"].splitlines()
-    cell = {l.split(" | ")[0].lstrip("| "): l.split(" | ")[4] for l in lines[2:]}
+    cell = {l.split(" | ")[0].lstrip("| "): l.split(" | ")[5] for l in lines[2:]}
     assert cell["TEV (self-hosted)"] == "50.0%" and cell["Random"] == "–"
     assert cell["Laya typed-decisions 421M (self-hosted)"].endswith("(runs zero-shot)")
 
@@ -72,3 +72,12 @@ def test_family_table_has_one_column_per_family(tmp_path):
     lines = render(["random"], items, tmp_path)["family"].splitlines()
     fams = sorted({it.category for it in items})
     assert lines[0] == "| Entry | " + " | ".join(f"`{c}`" for c in fams) + " |" and len(lines) == 3
+
+
+def test_hosting_names_the_gpu_a_self_hosted_run_used():
+    from decidebench.paths import V2_RESULTS_DIR
+    from decidebench.report import hosting
+
+    assert hosting("drex-max", V2_RESULTS_DIR) == "🟠 API"
+    assert hosting("yev1-4b", V2_RESULTS_DIR) == "🟢 self-hosted · RTX PRO 6000"
+    assert (hosting("imajev-4b"), hosting("random")) == ("🟢 self-hosted · L4", "–")

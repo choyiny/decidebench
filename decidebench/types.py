@@ -31,11 +31,7 @@ class Pricing:
 
 
 FREE = Pricing(0.0, 0.0, "no API calls", "2026-09-28")
-L4 = Pricing(0.0, 0.0, "https://getdeploying.com/gpus/nvidia-l4", "2026-09-28", basis="gpu_hours",
-             gpu="NVIDIA L4", hourly_usd=0.81)
-L40S = Pricing(0.0, 0.0, "https://aws.amazon.com/ec2/instance-types/g6e/", "2026-11-09", basis="gpu_hours",
-               gpu="NVIDIA L40S (AWS g6e.xlarge)", hourly_usd=1.861)
-RTX6000 = Pricing(0.0, 0.0, "https://aws.amazon.com/ec2/instance-types/g7e/", "2026-11-09", basis="gpu_hours",
+SELF_HOSTED = Pricing(0.0, 0.0, "https://aws.amazon.com/ec2/instance-types/g7e/", "2026-11-09", basis="gpu_hours",
                   gpu="NVIDIA RTX PRO 6000 Blackwell (AWS g7e.2xlarge)", hourly_usd=3.36312)
 
 

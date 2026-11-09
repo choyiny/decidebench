@@ -173,11 +173,12 @@ SELF_HOSTED = ["tev", "clm", "laya-typed", "decider-2b", "kev-4b",
 
 
 @pytest.mark.parametrize("entry", SELF_HOSTED)
-def test_self_hosted_entries_are_priced_by_l4_gpu_time(entry):
+def test_self_hosted_entries_are_priced_by_rtx_pro_6000_gpu_time(entry):
     cls = info(entry)
-    assert (cls.pricing.basis, cls.pricing.gpu, cls.pricing.hourly_usd) == ("gpu_hours", "NVIDIA L4", 0.81)
+    assert (cls.pricing.basis, cls.pricing.gpu, cls.pricing.hourly_usd) == (
+        "gpu_hours", "NVIDIA RTX PRO 6000 Blackwell (AWS g7e.2xlarge)", 3.36312)
     assert cls.label.endswith("(self-hosted)") and not cls.latency_comparable
-    assert ("NVIDIA L4 (CUDA)" if cls.kind == "system" else "DGX Spark (CUDA)") in cls.endpoint
+    assert "NVIDIA RTX PRO 6000 Blackwell (CUDA)" in cls.endpoint
 
 
 def test_tev_is_self_hosted_on_vllm_without_an_api_key(monkeypatch):

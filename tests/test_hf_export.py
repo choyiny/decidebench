@@ -23,7 +23,7 @@ def test_export_carries_examples_charts_and_the_readme_as_its_card(tmp_path):
     card = (out / "README.md").read_text()
     assert "config_name: examples" in card and "path: data/v2/examples.jsonl" in card
     assert "config_name: v1" in card and "path: data/v1/test.jsonl" in card
-    assert "| Entry | Company | Accuracy |" in card
+    assert "| Entry | Company | Hosting | Accuracy |" in card
     assert "](img/cost-vs-accuracy.png)" in card and "docs/img/" not in card
     assert "](https://github.com/choyiny/decidebench/tree/main/tools/selfhosted/README.md)" in card
     assert "<!-- GEN:" not in card
