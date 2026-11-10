@@ -145,3 +145,15 @@ class Yev2Qwen36System(TevSystem):
         super().__init__()
         self.name = self.model = "yev2-qwen36-35b-a3b"
         self.url = os.environ.get("YEV2_BASE_URL", "http://127.0.0.1:8782/v1").rstrip("/") + "/chat/completions"
+
+
+class Yev2Qwen36Fp8System(Yev2Qwen36System):
+    """yev2-qwen36-35b-a3b with vLLM's online FP8 weight quantization, capped at 45 GiB to stand in for a 48 GB GPU."""
+
+    label = "yev2-qwen36-35b-a3b FP8 (self-hosted)"
+    endpoint = "yev serve --backend vllm (vLLM 0.31, --quantization fp8, 45 GiB cap) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = self.model = "yev2-qwen36-35b-a3b-fp8"
+        self.url = os.environ.get("YEV2_FP8_BASE_URL", "http://127.0.0.1:8783/v1").rstrip("/") + "/chat/completions"
