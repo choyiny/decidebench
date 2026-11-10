@@ -1,10 +1,10 @@
 {
-  "entry": "yev2-qwen36-35b-a3b",
+  "entry": "yev2-35b-a3b",
   "kind": "system",
-  "label": "yev2-qwen36-35b-a3b (self-hosted)",
-  "model_requested": "yev2-qwen36-35b-a3b",
-  "model_served": "yev2-qwen36-35b-a3b",
-  "endpoint": "yev serve --backend vllm (vLLM 0.31, yev2-qwen36-35b-a3b merged, chat endpoint) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)",
+  "label": "yev2-35b-a3b (self-hosted)",
+  "model_requested": "yev2-35b-a3b",
+  "model_served": "yev2-35b-a3b",
+  "endpoint": "yev serve --backend vllm (vLLM 0.31, yev2-35b-a3b bf16, chat endpoint) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)",
   "gateway_hop": false,
   "pricing": {
     "input_per_mtok": 0.0,

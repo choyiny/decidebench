@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# yev0-35b-a3b (not in the table): yev2qwen.sh on yev0's data (yev-data-short) on Qwen3.6-35B-A3B; :8106 and :8786.
+# yev0-35b-a3b (not in the table): yev2-35b.sh on yev0's data (yev-data-short) on Qwen3.6-35B-A3B; :8106 and :8786.
 set -euo pipefail
 pip install -q --no-deps -e /work/yev2
 vllm serve /work/yev0-35b-a3b-model --host 127.0.0.1 --port 8106 --served-model-name yev --dtype bfloat16 \

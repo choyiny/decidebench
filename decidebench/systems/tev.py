@@ -135,20 +135,20 @@ class Yev14bSystem(TevSystem):
         self.url = os.environ.get("YEV1_BASE_URL", "http://127.0.0.1:8781/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev2Qwen36System(TevSystem):
-    """yev2 trial: yev1's Stage 1c recipe and data on a Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
+class Yev235bSystem(TevSystem):
+    """yev2-35b-a3b: yev1's Stage 1c recipe and data on a Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
 
-    label = "yev2-qwen36-35b-a3b (self-hosted)"
-    endpoint = "yev serve --backend vllm (vLLM 0.31, yev2-qwen36-35b-a3b merged, chat endpoint) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
+    label = "yev2-35b-a3b (self-hosted)"
+    endpoint = "yev serve --backend vllm (vLLM 0.31, yev2-35b-a3b bf16, chat endpoint) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
 
     def __init__(self) -> None:
         super().__init__()
-        self.name = self.model = "yev2-qwen36-35b-a3b"
+        self.name = self.model = "yev2-35b-a3b"
         self.url = os.environ.get("YEV2_BASE_URL", "http://127.0.0.1:8782/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev2Qwen36Fp8System(Yev2Qwen36System):
-    """yev2-qwen36-35b-a3b with vLLM's online FP8 weight quantization, capped at 45 GiB to stand in for a 48 GB GPU."""
+class Yev2Qwen36Fp8System(Yev235bSystem):
+    """yev2-35b-a3b with vLLM's online FP8 weight quantization, capped at 45 GiB to stand in for a 48 GB GPU."""
 
     label = "yev2-qwen36-35b-a3b FP8 (self-hosted)"
     endpoint = "yev serve --backend vllm (vLLM 0.31, --quantization fp8, 45 GiB cap) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
@@ -159,8 +159,8 @@ class Yev2Qwen36Fp8System(Yev2Qwen36System):
         self.url = os.environ.get("YEV2_FP8_BASE_URL", "http://127.0.0.1:8783/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev2Qwen36Nvfp4System(Yev2Qwen36System):
-    """yev2-qwen36-35b-a3b with NVFP4 weights (llm-compressor W4A16, router and gates in bf16), capped at 30 GiB to stand
+class Yev2Qwen36Nvfp4System(Yev235bSystem):
+    """yev2-35b-a3b with NVFP4 weights (llm-compressor W4A16, router and gates in bf16), capped at 30 GiB to stand
     in for a 32 GB GPU."""
 
     label = "yev2-qwen36-35b-a3b NVFP4 (self-hosted)"
@@ -172,7 +172,7 @@ class Yev2Qwen36Nvfp4System(Yev2Qwen36System):
         self.url = os.environ.get("YEV2_NVFP4_BASE_URL", "http://127.0.0.1:8784/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev2Fp8CheckpointSystem(Yev2Qwen36System):
+class Yev2Fp8CheckpointSystem(Yev235bSystem):
     """The published FP8 checkpoint (llm-compressor FP8_DYNAMIC), capped at 45 GiB to stand in for a 48 GB GPU."""
 
     label = "yev2-35b-a3b-fp8 (self-hosted)"
@@ -184,7 +184,7 @@ class Yev2Fp8CheckpointSystem(Yev2Qwen36System):
         self.url = os.environ.get("YEV2_FP8CKPT_BASE_URL", "http://127.0.0.1:8785/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev035bSystem(Yev2Qwen36System):
+class Yev035bSystem(Yev235bSystem):
     """yev0-35b-a3b: yev0's data (yev-data-short) and config on the Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
 
     label = "yev0-35b-a3b (self-hosted)"

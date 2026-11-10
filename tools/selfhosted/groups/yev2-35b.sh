@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# yev2-qwen36-35b-a3b (trial, not in the table): yev1.sh on its own ports, vLLM sidecar on :8102, yev serve on :8782.
+# yev2-35b-a3b (bf16): yev1.sh on its own ports, vLLM sidecar on :8102, yev serve on :8782.
 set -euo pipefail
 pip install -q --no-deps -e /work/yev2
 vllm serve /work/yev2-qwen-model --host 127.0.0.1 --port 8102 --served-model-name yev --dtype bfloat16 \
@@ -15,4 +15,4 @@ from yev.serve.backends import make_backend
 from yev.serve.remote import RemoteEngine
 engine = RemoteEngine(AutoTokenizer.from_pretrained("/work/yev2-qwen-model"), make_backend("vllm", "http://127.0.0.1:8102"),
                       "/work/yev2-qwen-model/calibration.json", max_len=16384)
-uvicorn.run(create_app(engine, model_name="yev2-qwen36-35b-a3b"), host="127.0.0.1", port=8782)'
+uvicorn.run(create_app(engine, model_name="yev2-35b-a3b"), host="127.0.0.1", port=8782)'

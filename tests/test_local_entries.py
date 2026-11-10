@@ -167,7 +167,7 @@ def test_zero_shot_exception_is_labelled_in_tables_and_meta():
 
 
 SELF_HOSTED = ["tev", "clm", "laya-typed", "decider-2b", "kev-4b",
-               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "yev0-4b", "yev1-4b", "clef-27b", "clef-flash-9b", "pplx-decider",
+               "decider-4b", "kev-9b", "jevk5", "imajev-4b", "yev0-4b", "yev1-4b", "yev2-35b-a3b", "yev2-35b-a3b-fp8", "clef-27b", "clef-flash-9b", "pplx-decider",
                "pplx-decider-flash", "openjev-flash-9b", "julia-1", "jeff-800m", "jeff-2b", "jeff-gemma4",
                "gliner-decide", "nimble-9b"]
 

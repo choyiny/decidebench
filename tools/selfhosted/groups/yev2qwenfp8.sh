@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# yev2-qwen36-35b-a3b FP8 (trial): yev2qwen.sh with vLLM's online FP8 and a 45 GiB cap (a 48 GB GPU); :8103 and :8783.
+# yev2-qwen36-35b-a3b FP8 (trial): yev2-35b.sh with vLLM's online FP8 and a 45 GiB cap (a 48 GB GPU); :8103 and :8783.
 set -euo pipefail
 pip install -q --no-deps -e /work/yev2
 vllm serve /work/yev2-qwen-model --host 127.0.0.1 --port 8103 --served-model-name yev --dtype bfloat16 --quantization fp8 \

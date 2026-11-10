@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# yev2-qwen36-35b-a3b NVFP4 (trial): yev2qwen.sh on the NVFP4 checkpoint with a 30 GiB cap (a 32 GB GPU); :8104 and :8784.
+# yev2-qwen36-35b-a3b NVFP4 (trial): yev2-35b.sh on the NVFP4 checkpoint with a 30 GiB cap (a 32 GB GPU); :8104 and :8784.
 set -euo pipefail
 pip install -q --no-deps -e /work/yev2
 vllm serve /work/yev2-qwen-nvfp4 --host 127.0.0.1 --port 8104 --served-model-name yev \
