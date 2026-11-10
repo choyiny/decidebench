@@ -58,7 +58,7 @@ class JevSystem:
     def __init__(self, variant: str = "default") -> None:
         self.variant = variant
         self.name = "jev" if variant == "default" else f"jev.{variant}"
-        self.model = os.environ.get("JEV_MODEL", "jev-latest")
+        self.model = os.environ.get("JEV_MODEL", "jev-1.14.0")
         self.url = os.environ.get("JEV_BASE_URL", "https://ai.xyspace.dev/v1").rstrip("/") + "/systemone"
         self.headers = {"Authorization": f"Bearer {os.environ['AISPACE_API_KEY']}"}
 

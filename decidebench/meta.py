@@ -13,7 +13,7 @@ from decidebench.paths import RESULTS_DIR, ROOT, meta_dir
 from decidebench.registry import info
 
 _UNSET = object()
-REQUESTED = {"tev": "togethercomputer/Tev1-4B-experimental", "jev": "jev-latest", "clm": "clm-latest",
+REQUESTED = {"tev": "togethercomputer/Tev1-4B-experimental", "jev": "jev-1.14.0", "clm": "clm-latest",
              "laya-typed": "laya-typed", "decider-2b": "decider-2b", "kev-4b": "kev-4b",
              "decider-4b": "decider-4b", "kev-9b": "kev-9b", "jevk5": "jevk5", "imajev-4b": "imajev-4b",
              "julia-1": "julia-1", "jeff-800m": "jeff", "jeff-2b": "jeff", "jeff-gemma4": "jeff",
