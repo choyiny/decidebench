@@ -2,7 +2,7 @@
 
 Headline runs are few-shot (one example per option), except Laya, CLM and Julia-1, which run zero-shot. Self-hosted
 costs come from the recorded wall-clock time (clean, unshared GPU). ZERO_SHOT pins the
-zero-shot variant runs of TEV and JEV.
+zero-shot variant runs of TEV and Jev.
 """
 
 import pytest

@@ -1,4 +1,4 @@
-"""Bespoke-Nimble-9B behind JEV's /v1/systemone protocol.
+"""Bespoke-Nimble-9B behind Jev's /v1/systemone protocol.
 
     python3 tools/nimble/serve.py --model-dir <Bespoke-Nimble-9B snapshot> --port 8770
 """

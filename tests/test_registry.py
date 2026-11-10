@@ -51,3 +51,11 @@ def test_registry_lists_decision_models_then_references(monkeypatch):
     assert info("deepseek").kind == "reference"
     with pytest.raises(ValueError):
         get_system("deepseek.zero_shot")
+
+def test_jev_label_carries_the_served_version():
+    from decidebench.registry import versioned
+
+    assert versioned(info("jev").label, "jev-1.14.0") == "Jev 1.14 (AI Space)"
+    assert versioned(info("jev").label, "typesafe-jev-1.13.0") == "Jev 1.13 (AI Space)"
+    assert versioned(info("jev").label, "jev-2.0.1") == "Jev 2.0.1 (AI Space)"
+    assert versioned(info("jev").label, None) == "Jev (AI Space)"

@@ -42,7 +42,7 @@ def test_build_meta_records_the_protocol():
     m = build_meta("jev", "jev-1.14.0", concurrency=4, warmup=3, run_date="2026-09-25",
                    harness_commit="jev-vs-tev@f8dc0b1", client_region=None, status="verified")
     assert m == {
-        "entry": "jev", "kind": "system", "label": "JEV (AI Space)",
+        "entry": "jev", "kind": "system", "label": "Jev 1.14 (AI Space)",
         "model_requested": "jev-1.14.0", "model_served": "jev-1.14.0",
         "endpoint": "AI Space /v1/systemone", "gateway_hop": True,
         "pricing": {"input_per_mtok": 0.042, "output_per_mtok": 0.0, "source": "https://flaviocopes.com/jev/",

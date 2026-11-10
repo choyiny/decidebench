@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from decidebench.baselines.random import RandomBaseline
 from decidebench.dataset import Item
 from decidebench.prompts import VARIANTS
@@ -128,3 +130,10 @@ def get_system(spec: str, items: list[Item] | None = None) -> System:
     if variant != "default":
         raise ValueError(f"variants apply to {WITH_VARIANTS} only, not {name!r}")
     return cls()
+
+
+def versioned(text: str, model: str | None) -> str:
+    """Fill a label's `{version}` from the served model id (`jev-1.14.0` → `1.14`); drop it when unknown."""
+    m = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", model or "")
+    v = f"{m[1]}.{m[2]}" + (f".{m[3]}" if m and m[3] not in (None, "0") else "") if m else ""
+    return re.sub(r"\s+", " ", text.replace("{version}", v)).strip()

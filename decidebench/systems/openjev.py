@@ -1,4 +1,4 @@
-"""Open models that serve JEV's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff, GLiNER2, Nimble,
+"""Open models that serve Jev's /v1/systemone protocol: Decider, Kev, JevK5, imajev, Julia-1, Jeff, GLiNER2, Nimble,
 Clef, pplx-decider and OpenJev."""
 
 from __future__ import annotations

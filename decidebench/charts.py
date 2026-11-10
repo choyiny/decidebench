@@ -14,7 +14,7 @@ from pathlib import Path
 from decidebench.dataset import load_items
 from decidebench.meta import load_meta
 from decidebench.paths import RESULTS_DIR, ROOT, V2_DATA_DIR, V2_RESULTS_DIR, load_env, results_path
-from decidebench.registry import ENTRIES, info
+from decidebench.registry import ENTRIES, info, versioned
 from decidebench.report import fronts, label, prepare, short
 
 DIAGRAMS = ROOT / "docs" / "diagrams"
@@ -29,7 +29,7 @@ GRID, AXIS = "rgba(45,49,66,0.08)", "rgba(45,49,66,0.25)"
 SANS, MONO = "'Geist', system-ui, sans-serif", "'Geist Mono', ui-monospace, monospace"
 FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
          "&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap")
-SHORT = {"tev": "TEV (self-hosted)", "jev": "JEV",
+SHORT = {"tev": "TEV (self-hosted)", "jev": "Jev {version}",
          "clef": "Clef", "clef-flash": "Clef-Flash", "drex-max": "Drex Max", "drex-2": "Drex 2.0", "drex": "Drex 1.5",
          "reax-1": "REAX 1", "s1-pro": "s1-pro", "s1-fast": "s1-fast",
          "openai-decisions": "GPT-6 Luna (Decisions)",
@@ -41,6 +41,11 @@ SHORT = {"tev": "TEV (self-hosted)", "jev": "JEV",
          "julia-1": "Julia-1", "jeff-800m": "Jeff-0.8B", "jeff-2b": "Jeff-2B", "jeff-gemma4": "Jeff-Gemma4",
          "gliner-decide": "GLiNER2.5-Decide", "nimble-9b": "Nimble-9B",
          "claude-opus-4-8": "Claude Opus 4.8"}
+
+
+def nick(p: str, summ: dict) -> str:
+    """Short chart name, with the served version where the label carries one."""
+    return versioned(SHORT.get(p) or short(p), summ[p].get("model"))
 
 
 def text(x, y, s, size=12, fill=INK, family=SANS, weight=400, anchor="start", extra=""):
@@ -235,7 +240,7 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
     below = sorted((p for p in others if p not in skipped and 100 * summ[p]["acc"] < a_lo), key=lambda p: -summ[p]["acc"])
     api = [p for p in others if p not in skipped and p not in below]
     self_hosted = {p for p in api if getattr(getattr(info(p), "pricing", None), "basis", "") == "gpu_hours"}
-    name = {p: SHORT.get(p) or short(p) for p in api}
+    name = {p: nick(p, summ) for p in api}
     desc = (f"Scatter plot of accuracy against {x_label.lower()}: "
             + ", ".join(f"{name[p]} {100 * summ[p]['acc']:.1f}% at {x_point_fmt(x_of(summ[p]))}" for p in api)
             + ". A dashed line joins the entries on the Pareto frontier.")
@@ -244,9 +249,9 @@ def frontier_scatter(slug, title, summ, front, x_of, x_label, x_lo, x_hi, x_tick
         notes.append("Off scale (no API calls): " + ", ".join(f"{label(b)} {100 * summ[b]['acc']:.1f}%" for b in base) + ".")
     if below:
         notes.append(f"Below the {a_lo:.0f}% axis: " + ", ".join(
-            f"{SHORT.get(p) or short(p)} {100 * summ[p]['acc']:.1f}%" for p in below) + ".")
+            f"{nick(p, summ)} {100 * summ[p]['acc']:.1f}%" for p in below) + ".")
     if skipped:
-        notes.append("Not plotted on this axis (self-hosted latency, or no usable answers): " + ", ".join(SHORT.get(p) or short(p) for p in skipped) + ".")
+        notes.append("Not plotted on this axis (self-hosted latency, or no usable answers): " + ", ".join(nick(p, summ) for p in skipped) + ".")
     legend = "Orange: API (requests go to the provider). Green: self-hosted (data stays on your hardware). Dashed line: Pareto frontier."
     footer = [line for note in notes + [legend]
               for line in textwrap.wrap(note, int((W - 16 - 112) / (12 * 0.55)), break_on_hyphens=False)]
@@ -329,9 +334,9 @@ def errors_cost_latency(slug, summ, ref="jev", ready=0.90, gpu_note="an NVIDIA L
     err = {p: 100 * (1 - summ[p]["acc"]) for p in rows}
     cost = {p: summ[p]["cost_task"] * 1e6 for p in rows}
     lat = {p: summ[p]["p50"] for p in rows}
-    name = {p: SHORT.get(p) or short(p) for p in rows}
+    name = {p: nick(p, summ) for p in rows}
     selfhosted = {p for p in rows if info(p).pricing.basis == "gpu_hours"}
-    vs = f"VS {(SHORT.get(ref) or short(ref)).upper()}"
+    vs = f"VS {nick(ref, summ).upper()}"
     w = 1120
 
     top, row_h, bar_h = 148, 32, 12
@@ -406,7 +411,7 @@ def errors_cost_latency(slug, summ, ref="jev", ready=0.90, gpu_note="an NVIDIA L
     notes = [f"{n} test items, so each wrong answer adds {100 / n:.2g} per 100. " + "".join(
              f"{label(b)} gets {100 * (1 - summ[b]['acc']):.2f} wrong per 100 (not shown). " for b in base)
              + f"Hatched green: self-hosted. Its cost is GPU time on {gpu_note}, and its latency is measured on the GPU "
-             "box with no network, so it is not compared with JEV.",
+             "box with no network, so it is not compared with Jev.",
              "Source: github.com/choyiny/decidebench"]
     for j, line in enumerate(l for n in notes for l in textwrap.wrap(n, 168)):
         s.append(text(24, y_axis + 68 + 18 * j, line, 12, SOFT, SANS))

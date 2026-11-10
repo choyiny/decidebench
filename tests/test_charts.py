@@ -49,7 +49,7 @@ def test_crowded_scatter_labels_every_point():
             "gliner-decide": {"cost_task": 8.09e-4, "p50": 2883.0, "acc": 0.99}, "nimble-9b": {"cost_task": 1.7e-3, "p50": 2477.0, "acc": 0.9925}}
     html, _ = frontier_scatter("c", "t", summ, {"tev", "jev"}, lambda v: v["cost_task"] * 1e6, "Cost (log scale)", 5, 5000,
                                (10, 100, 1000), str, str)
-    for name in ("TEV (self-hosted)", "JEV", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "imajev-4b", "DeepSeek-V4.1-Flash",
+    for name in ("TEV (self-hosted)", "Jev", "DeepSeek-V4-Flash", "GLM-5.3-Flash", "imajev-4b", "DeepSeek-V4.1-Flash",
                  "Drex 2.0", "GLiNER2.5-Decide", "Nimble-9B"):
         assert f">{name}</text>" in html, name
 
@@ -162,8 +162,8 @@ def test_merge_close_stacks_near_coincident_names_top_to_bottom():
     from decidebench.charts import merge_close
 
     points, names = merge_close({"a": (100, 110), "b": (104, 102), "c": (300, 100), "jev": (106, 104)},
-                                {"a": "A", "b": "B", "c": "C", "jev": "JEV"}, keep=("jev",))
-    assert names == {"b": "B\nA", "c": "C", "jev": "JEV"}
+                                {"a": "A", "b": "B", "c": "C", "jev": "Jev"}, keep=("jev",))
+    assert names == {"b": "B\nA", "c": "C", "jev": "Jev"}
     assert points["b"] == (102, 106) and points["c"] == (300, 100)
 
 
@@ -225,7 +225,7 @@ def test_a_label_is_clearly_nearer_its_own_point_than_a_neighbours():
              "drex-2": (216, 272)}
     texts = {p: (n, "", 13) for p, n in (("deepseek", "DeepSeek-V4-Flash"), ("deepseek-41", "DeepSeek-V4.1-Flash"),
                                           ("glm-flash", "GLM-5.3-Flash"), ("drex-2", "Drex 2.0"))}
-    texts["jev"] = ("JEV", "98.0% · 639 ms", 16)
+    texts["jev"] = ("Jev", "98.0% · 639 ms", 16)
     placed = place_labels(crowd, texts, preferred=PLACE, bounds=(8, 84, 872, 456))
     boxes = label_boxes(crowd, texts, placed)
     for p, box in boxes.items():

@@ -1,4 +1,4 @@
-"""GLiNER2.5-Decide behind JEV's /v1/systemone protocol.
+"""GLiNER2.5-Decide behind Jev's /v1/systemone protocol.
 
     python3 tools/gliner/serve.py --revision 5a7adf7 --port 8760
 """

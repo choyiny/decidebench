@@ -1,4 +1,4 @@
-"""pplx-decider behind JEV's /v1/systemone protocol, with Perplexity's own pplx_decider package (fast path).
+"""pplx-decider behind Jev's /v1/systemone protocol, with Perplexity's own pplx_decider package (fast path).
 
 Requests that arrive while the model is busy wait in a queue and are scored together in the next `decide` call
 (up to --max-batch), as a serving deployment would batch them.

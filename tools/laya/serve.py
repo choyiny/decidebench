@@ -1,4 +1,4 @@
-"""Laya typed-decisions behind JEV's /v1/systemone protocol.
+"""Laya typed-decisions behind Jev's /v1/systemone protocol.
 
     python3 tools/laya/serve.py --port 8710
 """

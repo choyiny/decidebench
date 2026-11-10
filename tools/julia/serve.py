@@ -1,4 +1,4 @@
-"""Julia-1 behind JEV's /v1/systemone protocol.
+"""Julia-1 behind Jev's /v1/systemone protocol.
 
     python3 tools/julia/serve.py --model <Julia-1 snapshot> --port 8740
 """

@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 from decidebench.paths import RESULTS_DIR, ROOT, meta_dir
-from decidebench.registry import info
+from decidebench.registry import info, versioned
 
 _UNSET = object()
 REQUESTED = {"tev": "togethercomputer/Tev1-4B-experimental", "jev": "jev-1.14.0", "clm": "clm-latest",
@@ -42,7 +42,7 @@ def build_meta(spec: str, model_served: str, *, concurrency: int, warmup: int, r
     return {
         "entry": spec,
         "kind": cls.kind,
-        "label": cls.label,
+        "label": versioned(cls.label, model_served),
         "model_requested": requested,
         "model_served": model_served,
         "endpoint": cls.endpoint,

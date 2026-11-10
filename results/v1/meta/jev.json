@@ -1,7 +1,7 @@
 {
   "entry": "jev",
   "kind": "system",
-  "label": "JEV (AI Space)",
+  "label": "Jev 1.13 (AI Space)",
   "model_requested": "jev-latest",
   "model_served": "jev-1.13.0",
   "endpoint": "AI Space /v1/systemone",

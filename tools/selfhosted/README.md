@@ -1,7 +1,7 @@
 # Self-hosted entries
 
 Sixteen entries run on a CUDA machine rather than a hosted API, each served the way its authors serve it: the
-decision models with open weights (TEV, the JEV reproductions, CLM, Laya, Julia-1, GLiNER2.5-Decide,
+decision models with open weights (TEV, the Jev reproductions, CLM, Laya, Julia-1, GLiNER2.5-Decide,
 Bespoke-Nimble-9B, yev0-4b and yev1-4b, Clef, pplx-decider, OpenJev Flash). v2 runs them on an NVIDIA RTX PRO 6000
 Blackwell (AWS g7e.2xlarge, 96 GB). v1 ran them on an NVIDIA L4 (24 GB), which its results record.
 
