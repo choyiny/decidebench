@@ -48,7 +48,7 @@ case $group in
   yev2qwenfp8) entries="yev2-qwen36-35b-a3b-fp8"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8783/health" ;;
   yev2qwennvfp4) entries="yev2-qwen36-35b-a3b-nvfp4"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8784/health" ;;
   yev2fp8ckpt) entries="yev2-35b-a3b-fp8"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8785/health" ;;
-  yev0data) entries="yev0data-qwen36-35b-a3b"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8786/health" ;;
+  yev0-35b) entries="yev0-35b-a3b"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8786/health" ;;
   clef)    entries="clef-27b"; image=lmsysorg/sglang:dev-clef; health="http://127.0.0.1:30000/v1/models" ;;
   clefflash) entries="clef-flash-9b"; image=lmsysorg/sglang:dev-clef; health="http://127.0.0.1:30001/v1/models" ;;
   pplx)    entries="pplx-decider"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8790/v1/models" ;;

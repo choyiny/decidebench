@@ -184,13 +184,13 @@ class Yev2Fp8CheckpointSystem(Yev2Qwen36System):
         self.url = os.environ.get("YEV2_FP8CKPT_BASE_URL", "http://127.0.0.1:8785/v1").rstrip("/") + "/chat/completions"
 
 
-class Yev0DataQwen36System(Yev2Qwen36System):
-    """2x2 cell: yev0's Stage 0 data and config on the Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
+class Yev035bSystem(Yev2Qwen36System):
+    """yev0-35b-a3b: yev0's data (yev-data-short) and config on the Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
 
-    label = "yev0data-qwen36-35b-a3b (self-hosted)"
+    label = "yev0-35b-a3b (self-hosted)"
     endpoint = "yev serve --backend vllm (vLLM 0.31, yev0 Stage 0 data on Qwen3.6-35B-A3B, merged) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
 
     def __init__(self) -> None:
         super().__init__()
-        self.name = self.model = "yev0data-qwen36-35b-a3b"
-        self.url = os.environ.get("YEV0DATA_BASE_URL", "http://127.0.0.1:8786/v1").rstrip("/") + "/chat/completions"
+        self.name = self.model = "yev0-35b-a3b"
+        self.url = os.environ.get("YEV0_35B_BASE_URL", "http://127.0.0.1:8786/v1").rstrip("/") + "/chat/completions"

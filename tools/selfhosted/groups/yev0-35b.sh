@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# yev0data-qwen36-35b-a3b (2x2 cell, not in the table): yev2qwen.sh on yev0's data trained on Qwen3.6-35B-A3B; :8106 and :8786.
+# yev0-35b-a3b (not in the table): yev2qwen.sh on yev0's data (yev-data-short) on Qwen3.6-35B-A3B; :8106 and :8786.
 set -euo pipefail
 pip install -q --no-deps -e /work/yev2
-vllm serve /work/yev0data-qwen36-35b-a3b-model --host 127.0.0.1 --port 8106 --served-model-name yev --dtype bfloat16 \
+vllm serve /work/yev0-35b-a3b-model --host 127.0.0.1 --port 8106 --served-model-name yev --dtype bfloat16 \
   --max-model-len 16385 --enable-prefix-caching --generation-config vllm --logprobs-mode processed_logprobs \
   --max-logprobs 26 --max-num-seqs 64 --gpu-memory-utilization ${GPU_MEM_UTIL:-0.85} --trust-remote-code &
 for _ in $(seq 360); do curl -fsS --max-time 5 http://127.0.0.1:8106/health >/dev/null 2>&1 && break; sleep 5; done
@@ -13,6 +13,6 @@ from transformers import AutoTokenizer
 from yev.serve.app import create_app
 from yev.serve.backends import make_backend
 from yev.serve.remote import RemoteEngine
-engine = RemoteEngine(AutoTokenizer.from_pretrained("/work/yev0data-qwen36-35b-a3b-model"), make_backend("vllm", "http://127.0.0.1:8106"),
-                      "/work/yev0data-qwen36-35b-a3b-model/calibration.json", max_len=16384)
-uvicorn.run(create_app(engine, model_name="yev0data-qwen36-35b-a3b"), host="127.0.0.1", port=8786)'
+engine = RemoteEngine(AutoTokenizer.from_pretrained("/work/yev0-35b-a3b-model"), make_backend("vllm", "http://127.0.0.1:8106"),
+                      "/work/yev0-35b-a3b-model/calibration.json", max_len=16384)
+uvicorn.run(create_app(engine, model_name="yev0-35b-a3b"), host="127.0.0.1", port=8786)'
