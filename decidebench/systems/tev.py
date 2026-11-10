@@ -133,3 +133,15 @@ class Yev14bSystem(TevSystem):
         self.name = "yev1-4b"
         self.model = "yev1-4b"
         self.url = os.environ.get("YEV1_BASE_URL", "http://127.0.0.1:8781/v1").rstrip("/") + "/chat/completions"
+
+
+class Yev2Qwen36System(TevSystem):
+    """yev2 trial: yev1's Stage 1c recipe and data on a Qwen3.6-35B-A3B base, behind `yev serve` with a vLLM sidecar."""
+
+    label = "yev2-qwen36-35b-a3b (self-hosted)"
+    endpoint = "yev serve --backend vllm (vLLM 0.31, yev2-qwen36-35b-a3b merged, chat endpoint) on an NVIDIA RTX PRO 6000 Blackwell (CUDA)"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = self.model = "yev2-qwen36-35b-a3b"
+        self.url = os.environ.get("YEV2_BASE_URL", "http://127.0.0.1:8782/v1").rstrip("/") + "/chat/completions"

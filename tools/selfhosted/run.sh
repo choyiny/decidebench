@@ -44,6 +44,7 @@ case $group in
   nimble)  entries="nimble-9b";                  health="http://127.0.0.1:8770/v1/models" ;;
   yev)     entries="yev0-4b";                     health="http://127.0.0.1:8780/health" ;;
   yev1)    entries="yev1-4b"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8781/health" ;;
+  yev2qwen) entries="yev2-qwen36-35b-a3b"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8782/health" ;;
   clef)    entries="clef-27b"; image=lmsysorg/sglang:dev-clef; health="http://127.0.0.1:30000/v1/models" ;;
   clefflash) entries="clef-flash-9b"; image=lmsysorg/sglang:dev-clef; health="http://127.0.0.1:30001/v1/models" ;;
   pplx)    entries="pplx-decider"; image=vllm/vllm-openai:v0.31.0; health="http://127.0.0.1:8790/v1/models" ;;
