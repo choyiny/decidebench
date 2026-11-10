@@ -29,7 +29,7 @@ GRID, AXIS = "rgba(45,49,66,0.08)", "rgba(45,49,66,0.25)"
 SANS, MONO = "'Geist', system-ui, sans-serif", "'Geist Mono', ui-monospace, monospace"
 FONTS = ("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1"
          "&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap")
-SHORT = {"tev": "TEV (self-hosted)", "jev": "Jev {version}",
+SHORT = {"tev": "TEV (self-hosted)", "jev": "Jev {version}", "jev-113": "Jev {version}",
          "clef": "Clef", "clef-flash": "Clef-Flash", "drex-max": "Drex Max", "drex-2": "Drex 2.0", "drex": "Drex 1.5",
          "reax-1": "REAX 1", "s1-pro": "s1-pro", "s1-fast": "s1-fast",
          "openai-decisions": "GPT-6 Luna (Decisions)",

@@ -55,10 +55,12 @@ class JevSystem:
     gateway_hop = True
     latency_comparable = True
 
+    entry, pinned = "jev", "jev-1.14.0"
+
     def __init__(self, variant: str = "default") -> None:
         self.variant = variant
-        self.name = "jev" if variant == "default" else f"jev.{variant}"
-        self.model = os.environ.get("JEV_MODEL", "jev-1.14.0")
+        self.name = self.entry if variant == "default" else f"{self.entry}.{variant}"
+        self.model = os.environ.get("JEV_MODEL", self.pinned) if self.entry == "jev" else self.pinned
         self.url = os.environ.get("JEV_BASE_URL", "https://ai.xyspace.dev/v1").rstrip("/") + "/systemone"
         self.headers = {"Authorization": f"Bearer {os.environ['AISPACE_API_KEY']}"}
 
@@ -86,6 +88,12 @@ class JevSystem:
                    "examples_shown": (data.get("examples_shown") or {}).get(QUESTION_ID, len(shots)),
                    "examples_total": len(shots)},
         )
+
+
+class Jev113System(JevSystem):
+    """Jev 1.13, pinned, kept beside the current Jev."""
+
+    entry, pinned = "jev-113", "jev-1.13.0"
 
 
 class ClefSystem(JevSystem):
