@@ -397,3 +397,44 @@ def test_openai_decisions_zero_shot_sends_only_the_question(monkeypatch):
     pred = asyncio.run(go())
     assert bodies[0]["questions"][0]["instructions"] == ITEM.question
     assert pred.provider == "openai-decisions.zero_shot" and pred.extra["examples_total"] == 0
+
+
+@pytest.mark.parametrize(("entry", "model", "url", "env", "price", "org"), [
+    ("ms-decision-1-1", "microsoft/microsoft-decision-1.1", "https://openrouter.ai/api/alpha/decisions",
+     "OPENROUTER_API_KEY", 0.042, "Microsoft"),
+    ("liquid-d1-2", "d1.2", "https://api.liquid.ai/decisions/v1/systemone", "LIQUID_API_KEY", 0.02, "Liquid AI"),
+    ("liquid-d1-2-ultra", "d1.2-ultra", "https://api.liquid.ai/decisions/v1/systemone", "LIQUID_API_KEY", 0.042,
+     "Liquid AI"),
+])
+def test_jev_compatible_decision_models_take_examples_in_criteria(monkeypatch, entry, model, url, env, price, org):
+    import asyncio
+
+    import httpx
+
+    from decidebench.registry import get_system, info
+    from decidebench.registry import org as org_of
+
+    monkeypatch.setattr(fewshot, "for_item", lambda item, pool=None: SHOTS)
+    monkeypatch.setenv(env, "k")
+    seen = []
+
+    def handler(request):
+        seen.append((str(request.url), request.headers["authorization"], json.loads(request.content)))
+        return httpx.Response(200, json={"model": model, "answers": {"decision": {"type": "choice",
+                                         "choice": ITEM.options[0].key}},
+                                         "usage": {"input_tokens": 1000, "output_tokens": 0}})
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await get_system(entry).predict(client, ITEM)
+
+    pred = asyncio.run(go())
+    sent_url, auth, body = seen[0]
+    assert sent_url == url and auth == "Bearer k" and body["model"] == model
+    criteria = body["questions"][jev.QUESTION_ID]["criteria"]
+    assert any(isinstance(v, dict) and v["examples"] for v in criteria.values())
+    assert pred.key == ITEM.options[0].key and pred.extra["examples_total"] == len(SHOTS)
+    cls = info(entry)
+    assert cls.kind == "system" and cls.latency_comparable
+    assert (cls.pricing.input_per_mtok, cls.pricing.output_per_mtok) == (price, 0.0)
+    assert org_of(entry) == org
