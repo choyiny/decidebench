@@ -400,6 +400,8 @@ def test_openai_decisions_zero_shot_sends_only_the_question(monkeypatch):
 
 
 @pytest.mark.parametrize(("entry", "model", "url", "env", "price", "org"), [
+    ("gemini-decision-1", "google/gemini-decision-1", "https://openrouter.ai/api/alpha/decisions",
+     "OPENROUTER_API_KEY", 0.10, "Google"),
     ("ms-decision-1-1", "microsoft/microsoft-decision-1.1", "https://openrouter.ai/api/alpha/decisions",
      "OPENROUTER_API_KEY", 0.042, "Microsoft"),
     ("liquid-d1-2", "d1.2", "https://api.liquid.ai/decisions/v1/systemone", "LIQUID_API_KEY", 0.02, "Liquid AI"),
